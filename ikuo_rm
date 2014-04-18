@@ -1,0 +1,30 @@
+#!/bin/sh
+
+nofile=""
+existfile=""
+flags=""
+
+for f in $*; do
+ if [ ! -e $f ]; then
+  if [ "$f" = '-r' ] || [ "$f" = '-f' ]; then
+   hoge="$hoge $f"
+  elif [ "$f" = '-i' ]; then
+   flags="$flags $f"
+  else
+   nofile="$nofile $f"
+  fi
+ else
+  existfile="$existfile $f"
+ fi
+done
+
+if [ "$nofile" = "" ]; then
+ mv $flags $* $HOME/.trash/
+else
+ if [ "$existfile" != "" ]; then
+  mv $flags $existfile $HOME/.trash/
+ fi
+ for no in $nofile; do
+  echo $no: No such file or directory
+ done
+fi

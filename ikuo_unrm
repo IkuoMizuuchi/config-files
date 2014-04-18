@@ -1,0 +1,20 @@
+#!/bin/sh
+
+nofile=""
+existfile=""
+
+for f in $*; do
+ if [ ! -e $HOME/.trash/$f ]; then
+  nofile="$nofile $f"
+ else
+  existfile="$existfile $HOME/.trash/$f"
+ fi
+done
+
+if [ "$existfile" != "" ]; then
+ mv $existfile .
+fi
+
+for no in $nofile; do
+ echo $no: No such file or directory in the trashbox
+done
