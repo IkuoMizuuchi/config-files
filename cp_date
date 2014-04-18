@@ -1,0 +1,37 @@
+#! /bin/tcsh -f
+#
+# cp_date
+#
+#         					931009 S. Kagami
+#				     update : 	980112 I. Mizuuchi
+#				     update : 	090311 I. Mizuuchi
+#				     update : 	090610 I. Mizuuchi
+
+
+if ($#argv != 0) then 
+  foreach file ($argv)
+    set nodir = ${file:t}
+    set base = ${nodir:r}
+    set ext = ${file:e}
+    set dir = `dirname ${file}`
+    set d = `date -r ${file} '+%Y%m%d'`
+
+    mkdir -p "${dir}/bak"
+    chmod go-rwx "${dir}/bak"
+    if (-f "${dir}/bak/${base}-${d}.${ext}") then
+      echo -n "overwrite" bak/$file.$d "[y/n]? "
+      set RESPONSE = $<
+      if ("$RESPONSE" == "y" || "$RESPONSE" == "Y") then
+	cp -pf "$file" "${dir}/bak/${base}-${d}.${ext}"
+	echo ${dir}/bak/${base}-${d}.${ext}
+      else
+	set longd = `date -r ${file} '+%Y%m%d-%H%M'`
+	cp -pi "$file" "${dir}/bak/${base}-${longd}.${ext}"
+	echo ${dir}/bak/${base}-${longd}.${ext}
+      endif
+    else
+      cp -p "$file" "${dir}/bak/${base}-${d}.${ext}"
+      echo ${dir}/bak/${base}-${d}.${ext}
+    endif
+  end
+endif
