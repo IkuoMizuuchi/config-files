@@ -1,0 +1,10 @@
+# This file is for adding to the end of ~/.bashrc
+# $Id: bash.bashrc-extra,v 1.2 2010-07-13 11:36:46 ikuo Exp $
+
+if [ -f ~/.my-settings ]; then
+    . ~/.my-settings
+fi
+
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi

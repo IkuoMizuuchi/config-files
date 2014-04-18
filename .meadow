@@ -1,0 +1,704 @@
+;; -*- Mode: Emacs-Lisp -*-
+;;
+;;	$Id: .meadow 4143 2014-03-09 12:48:03Z ikuo $
+;;
+
+;; japanese mode
+;;
+;;(select-input-method "MW32-IME")
+;(toggle-input-method)
+;(inactivate-input-method)
+; (set-language-environment "Japanese")
+(setq default-input-method "MW32-IME")
+(mw32-ime-initialize)
+(global-unset-key "\C-\\")
+(global-set-key "\C-\\" 'toggle-input-method)
+(setq-default mw32-ime-mode-line-state-indicator "[--]")
+(setq mw32-ime-mode-line-state-indicator-list '("[--]" "[‚ ]" "[--]"))
+
+;;
+;;    shell
+
+(setq explicit-shell-file-name "C:/cygwin/usr/local/bin/f_bash.exe")
+(setq shell-file-name "C:/cygwin/bin/sh.exe")
+; (setq shell-command-option "-c")
+(setq shell-command-switch "-c")
+
+(add-hook 'shell-mode-hook
+          (lambda ()
+; 	    (set-buffer-process-coding-system 'undecided-dos 'sjis-unix)))
+	    (set-buffer-process-coding-system 'japanese-shift-jis-dos
+					      'japanese-shift-jis-unix)))
+(setq shell-file-name-chars "~/A-Za-z0-9_^$!#%&{}@`'.,:()-")
+;; ‰º‹L‚Í Meadow ‚Ì‚İ—LŒø NTEmacs ‚Å‚Í“®‚©‚È‚¢
+(require 'mw32script)
+(mw32script-init)
+
+(if (and (= 20 emacs-major-version) (= 2 emacs-minor-version))
+	(if (functionp 'orig-start-process)
+		()
+	(fset 'orig-start-process (symbol-function 'start-process))
+	(defun start-process (name buffer program &rest args)
+	(interactive)
+	(apply 'orig-start-process name buffer program
+		(mapcar (lambda (arg)
+				(encode-coding-string arg file-name-coding-system))
+					args)))))
+(add-hook 'comint-output-filter-function 'shell-strip-ctrl-m nil t)
+
+;;***************************
+;;shell-clear (by ogura)
+;;shell‚ÅC-l‚µ‚½‚Æ‚«C‚·‚×‚ÄÁ‚¦‚é‚æ‚¤‚ÉD
+;;***************************
+(defun shell-clear()
+  "In shell-mode,clear all display and move cursor top of the buffer."
+  (interactive)
+  (recenter 0))
+(eval-after-load "shell"
+  '(define-key shell-mode-map "\C-l" 'shell-clear))
+
+;;shell-mode‚Åls‚µ‚½‚Æ‚«F‚ğ•\¦
+(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+
+
+;;
+;;
+(setq visible-bell t)
+(create-fontset-from-request "private-mincho-8x16"
+			     '((width . 8)
+			       (height . 16)
+			       (fixed . t)
+			       (italic . nil))
+			     '((family . "‚l‚r –¾’©")
+			       (family . "Courier New")))
+(create-fontset-from-request "private-osaka-8"
+			     '(
+			       (width . 8)
+			       (height . 16)
+			       (fixed . t)
+			       (italic . nil)
+; 			       (family . "Osaka|“™•")
+			       )
+			     '((family . "Osaka|“™•")
+			       (family . "Osaka")
+			       (family . "Osaka-UI")))
+(cond
+ ((eq emacs-major-version 20)
+  (w32-add-font "Osaka"
+		'((encoding-type . 4);;söŒë‚Ì––‚S
+		  (overhang . 0)
+		  (base . 17)
+		  ;;(height . 24) ;;18+3+3
+		  (height . 22);;18+3+3
+		  (width . 9)))
+  ;;•’Ê
+  (w32-change-font-logfont 
+   "Osaka" 0
+   '(w32-logfont "Osaka|“™•" 0 -19 400 0 nil nil nil 128 1 3 49))
+  ;;‘¾š
+  (w32-change-font-logfont 
+   "Osaka" 1 
+   '(w32-logfont "Osaka|“™•" 0 -19 700 0 nil nil nil 128 1 3 49))
+  ;;Î‘Ì
+  (w32-change-font-logfont 
+   "Osaka" 2
+   '(w32-logfont "Osaka|“™•" 0 -19 700 0 nil nil nil 128 1 3 49))
+  ;;‘¾šEÎ‘Ì
+  (w32-change-font-logfont 
+   "Osaka" 3
+   '(w32-logfont "Osaka|“™•" 0 -19 400 0 t nil nil 128 1 3 49))
+  ;;‚·‚×‚Ä‚É“K‰‚³‚¹‚é
+  (new-fontset "Osaka-fontset"
+	       '((ascii . "Osaka")
+		 (japanese-jisx0208 . "Osaka")
+		 (katakana-jisx0201 . "Osaka")))
+  ) ;; end of (eq emacs-major-version 20)
+ (t
+  (w32-add-font
+   "osaka|“™•10"
+   '((spec
+      ((:char-spec ascii :height any)
+       strict
+       (w32-logfont "osaka|“™•" 0 -13 400 0 nil nil nil 0 1 3 49))
+      ((:char-spec ascii :height any :weight bold)
+       strict
+       (w32-logfont "osaka|“™•" 0 -13 400 0 nil nil nil 0 1 3 49))
+      ((:char-spec ascii :height any :slant italic)
+       strict
+       (w32-logfont "osaka|“™•" 0 -13 400 0 t nil nil 0 1 3 49))
+      ((:char-spec ascii :height any :weight bold :slant italic)
+       strict
+       (w32-logfont "osaka|“™•" 0 -13 400 0 t nil nil 0 1 3 49))
+      ((:char-spec japanese-jisx0208 :height any)
+       strict
+       (w32-logfont "osaka|“™•" 0 -13 400 0 nil nil nil 128 1 3 49))
+      ((:char-spec japanese-jisx0208 :height any :weight bold)
+       strict
+       (w32-logfont "osaka|“™•" 0 -13 400 0 nil nil nil 128 1 3 49)
+       ((spacing . -1)))
+      ((:char-spec japanese-jisx0208 :height any :slant italic)
+       strict
+       (w32-logfont "osaka|“™•" 0 -13 400 0 t nil nil 128 1 3 49))
+      ((:char-spec japanese-jisx0208 :height any :weight bold :slant italic)
+       strict
+       (w32-logfont "osaka|“™•" 0 -13 400 0 t nil nil 128 1 3 49)
+       ((spacing . -1))))))
+  (w32-add-font
+   "osaka|“™•11"
+   '((spec
+      ((:char-spec ascii :height any)
+       strict
+       (w32-logfont "osaka|“™•" 0 -15 400 0 nil nil nil 0 1 3 49))
+      ((:char-spec ascii :height any :weight bold)
+       strict
+       (w32-logfont "osaka|“™•" 0 -15 400 0 nil nil nil 0 1 3 49))
+      ((:char-spec ascii :height any :slant italic)
+       strict
+       (w32-logfont "osaka|“™•" 0 -15 400 0 t nil nil 0 1 3 49))
+      ((:char-spec ascii :height any :weight bold :slant italic)
+       strict
+       (w32-logfont "osaka|“™•" 0 -15 400 0 t nil nil 0 1 3 49))
+      ((:char-spec japanese-jisx0208 :height any)
+       strict
+       (w32-logfont "osaka|“™•" 0 -15 400 0 nil nil nil 128 1 3 49))
+      ((:char-spec japanese-jisx0208 :height any :weight bold)
+       strict
+       (w32-logfont "osaka|“™•" 0 -15 400 0 nil nil nil 128 1 3 49)
+       ((spacing . -1)))
+      ((:char-spec japanese-jisx0208 :height any :slant italic)
+       strict
+       (w32-logfont "osaka|“™•" 0 -15 400 0 t nil nil 128 1 3 49))
+      ((:char-spec japanese-jisx0208 :height any :weight bold :slant italic)
+       strict
+       (w32-logfont "osaka|“™•" 0 -15 400 0 t nil nil 128 1 3 49)
+       ((spacing . -1))))))
+  (w32-add-font
+   "osaka|“™•12"
+   '((spec
+      ((:char-spec ascii :height any)
+       strict
+       (w32-logfont "osaka|“™•" 0 -16 400 0 nil nil nil 0 1 3 49))
+      ((:char-spec ascii :height any :weight bold)
+       strict
+       (w32-logfont "osaka|“™•" 0 -16 400 0 nil nil nil 0 1 3 49))
+      ((:char-spec ascii :height any :slant italic)
+       strict
+       (w32-logfont "osaka|“™•" 0 -16 400 0 t nil nil 0 1 3 49))
+      ((:char-spec ascii :height any :weight bold :slant italic)
+       strict
+       (w32-logfont "osaka|“™•" 0 -16 400 0 t nil nil 0 1 3 49))
+      ((:char-spec japanese-jisx0208 :height any)
+       strict
+       (w32-logfont "osaka|“™•" 0 -16 400 0 nil nil nil 128 1 3 49))
+      ((:char-spec japanese-jisx0208 :height any :weight bold)
+       strict
+       (w32-logfont "osaka|“™•" 0 -16 400 0 nil nil nil 128 1 3 49)
+       ((spacing . -1)))
+      ((:char-spec japanese-jisx0208 :height any :slant italic)
+       strict
+       (w32-logfont "osaka|“™•" 0 -16 400 0 t nil nil 128 1 3 49))
+      ((:char-spec japanese-jisx0208 :height any :weight bold :slant italic)
+       strict
+       (w32-logfont "osaka|“™•" 0 -16 400 0 t nil nil 128 1 3 49)
+       ((spacing . -1))))))
+  (w32-add-font
+   "osaka|“™•13"
+   '((spec
+      ((:char-spec ascii :height any)
+       strict
+       (w32-logfont "osaka|“™•" 0 -17 400 0 nil nil nil 0 1 3 49))
+      ((:char-spec ascii :height any :weight bold)
+       strict
+       (w32-logfont "osaka|“™•" 0 -17 400 0 nil nil nil 0 1 3 49))
+      ((:char-spec ascii :height any :slant italic)
+       strict
+       (w32-logfont "osaka|“™•" 0 -17 400 0 t nil nil 0 1 3 49))
+      ((:char-spec ascii :height any :weight bold :slant italic)
+       strict
+       (w32-logfont "osaka|“™•" 0 -17 400 0 t nil nil 0 1 3 49))
+      ((:char-spec japanese-jisx0208 :height any)
+       strict
+       (w32-logfont "osaka|“™•" 0 -17 400 0 nil nil nil 128 1 3 49))
+      ((:char-spec japanese-jisx0208 :height any :weight bold)
+       strict
+       (w32-logfont "osaka|“™•" 0 -17 400 0 nil nil nil 128 1 3 49)
+       ((spacing . -1)))
+      ((:char-spec japanese-jisx0208 :height any :slant italic)
+       strict
+       (w32-logfont "osaka|“™•" 0 -17 400 0 t nil nil 128 1 3 49))
+      ((:char-spec japanese-jisx0208 :height any :weight bold :slant italic)
+       strict
+       (w32-logfont "osaka|“™•" 0 -17 400 0 t nil nil 128 1 3 49)
+       ((spacing . -1))))))
+  (w32-add-font
+   "osaka|“™•14"
+   '((spec
+      ((:char-spec ascii :height any)
+       strict
+       (w32-logfont "osaka|“™•" 0 -19 400 0 nil nil nil 0 1 3 49))
+      ((:char-spec ascii :height any :weight bold)
+       strict
+       (w32-logfont "osaka|“™•" 0 -19 400 0 nil nil nil 0 1 3 49))
+      ((:char-spec ascii :height any :slant italic)
+       strict
+       (w32-logfont "osaka|“™•" 0 -19 400 0 t nil nil 0 1 3 49))
+      ((:char-spec ascii :height any :weight bold :slant italic)
+       strict
+       (w32-logfont "osaka|“™•" 0 -19 400 0 t nil nil 0 1 3 49))
+      ((:char-spec japanese-jisx0208 :height any)
+       strict
+       (w32-logfont "osaka|“™•" 0 -19 400 0 nil nil nil 128 1 3 49))
+      ((:char-spec japanese-jisx0208 :height any :weight bold)
+       strict
+       (w32-logfont "osaka|“™•" 0 -19 400 0 nil nil nil 128 1 3 49)
+       ((spacing . -1)))
+      ((:char-spec japanese-jisx0208 :height any :slant italic)
+       strict
+       (w32-logfont "osaka|“™•" 0 -19 400 0 t nil nil 128 1 3 49))
+      ((:char-spec japanese-jisx0208 :height any :weight bold :slant italic)
+       strict
+       (w32-logfont "osaka|“™•" 0 -19 400 0 t nil nil 128 1 3 49)
+       ((spacing . -1))))))
+  (w32-add-font
+   "osaka|“™•15"
+   '((spec
+      ((:char-spec ascii :height any)
+       strict
+       (w32-logfont "osaka|“™•" 0 -20 400 0 nil nil nil 0 1 3 49))
+      ((:char-spec ascii :height any :weight bold)
+       strict
+       (w32-logfont "osaka|“™•" 0 -20 400 0 nil nil nil 0 1 3 49))
+      ((:char-spec ascii :height any :slant italic)
+       strict
+       (w32-logfont "osaka|“™•" 0 -20 400 0 t nil nil 0 1 3 49))
+      ((:char-spec ascii :height any :weight bold :slant italic)
+       strict
+       (w32-logfont "osaka|“™•" 0 -20 400 0 t nil nil 0 1 3 49))
+      ((:char-spec japanese-jisx0208 :height any)
+       strict
+       (w32-logfont "osaka|“™•" 0 -20 400 0 nil nil nil 128 1 3 49))
+      ((:char-spec japanese-jisx0208 :height any :weight bold)
+       strict
+       (w32-logfont "osaka|“™•" 0 -20 400 0 nil nil nil 128 1 3 49)
+       ((spacing . -1)))
+      ((:char-spec japanese-jisx0208 :height any :slant italic)
+       strict
+       (w32-logfont "osaka|“™•" 0 -20 400 0 t nil nil 128 1 3 49))
+      ((:char-spec japanese-jisx0208 :height any :weight bold :slant italic)
+       strict
+       (w32-logfont "osaka|“™•" 0 -20 400 0 t nil nil 128 1 3 49)
+       ((spacing . -1))))))
+  (w32-add-font
+   "osaka|“™•16"
+   '((spec
+      ((:char-spec ascii :height any)
+       strict
+       (w32-logfont "osaka|“™•" 0 -21 400 0 nil nil nil 0 1 3 49))
+      ((:char-spec ascii :height any :weight bold)
+       strict
+       (w32-logfont "osaka|“™•" 0 -21 400 0 nil nil nil 0 1 3 49))
+      ((:char-spec ascii :height any :slant italic)
+       strict
+       (w32-logfont "osaka|“™•" 0 -21 400 0 t nil nil 0 1 3 49))
+      ((:char-spec ascii :height any :weight bold :slant italic)
+       strict
+       (w32-logfont "osaka|“™•" 0 -21 400 0 t nil nil 0 1 3 49))
+      ((:char-spec japanese-jisx0208 :height any)
+       strict
+       (w32-logfont "osaka|“™•" 0 -21 400 0 nil nil nil 128 1 3 49))
+      ((:char-spec japanese-jisx0208 :height any :weight bold)
+       strict
+       (w32-logfont "osaka|“™•" 0 -21 400 0 nil nil nil 128 1 3 49)
+       ((spacing . -1)))
+      ((:char-spec japanese-jisx0208 :height any :slant italic)
+       strict
+       (w32-logfont "osaka|“™•" 0 -21 400 0 t nil nil 128 1 3 49))
+      ((:char-spec japanese-jisx0208 :height any :weight bold :slant italic)
+       strict
+       (w32-logfont "osaka|“™•" 0 -21 400 0 t nil nil 128 1 3 49)
+       ((spacing . -1))))))
+  (w32-add-font
+   "osaka|“™•20"
+   '((spec
+      ((:char-spec ascii :height any)
+       strict
+       (w32-logfont "osaka|“™•" 0 -27 400 0 nil nil nil 0 1 3 49))
+      ((:char-spec ascii :height any :weight bold)
+       strict
+       (w32-logfont "osaka|“™•" 0 -27 400 0 nil nil nil 0 1 3 49))
+      ((:char-spec ascii :height any :slant italic)
+       strict
+       (w32-logfont "osaka|“™•" 0 -27 400 0 t nil nil 0 1 3 49))
+      ((:char-spec ascii :height any :weight bold :slant italic)
+       strict
+       (w32-logfont "osaka|“™•" 0 -27 400 0 t nil nil 0 1 3 49))
+      ((:char-spec japanese-jisx0208 :height any)
+       strict
+       (w32-logfont "osaka|“™•" 0 -27 400 0 nil nil nil 128 1 3 49))
+      ((:char-spec japanese-jisx0208 :height any :weight bold)
+       strict
+       (w32-logfont "osaka|“™•" 0 -27 400 0 nil nil nil 128 1 3 49)
+       ((spacing . -1)))
+      ((:char-spec japanese-jisx0208 :height any :slant italic)
+       strict
+       (w32-logfont "osaka|“™•" 0 -27 400 0 t nil nil 128 1 3 49))
+      ((:char-spec japanese-jisx0208 :height any :weight bold :slant italic)
+       strict
+       (w32-logfont "osaka|“™•" 0 -27 400 0 t nil nil 128 1 3 49)
+       ((spacing . -1))))))
+  (w32-add-font
+   "fontset-meiryo"
+   '((strict-spec
+      ((:char-spec ascii :height any)
+       (w32-logfont "ƒƒCƒŠƒI" 0 18 400 0 nil nil nil 0 1 3 49))
+      ((:char-spec ascii :height any :weight bold)
+       (w32-logfont "ƒƒCƒŠƒI" 0 18 700 0 nil nil nil 0 1 3 49))
+      ((:char-spec ascii :height any :slant italic)
+       (w32-logfont "ƒƒCƒŠƒI" 0 18 400 0	t nil nil 0 1 3 49))
+      ((:char-spec ascii :height any :weight bold :slant italic)
+       (w32-logfont "ƒƒCƒŠƒI" 0 18 700 0	t nil nil 0 1 3 49))
+      ((:char-spec japanese-jisx0208 :height any)
+       (w32-logfont "ƒƒCƒŠƒI" 0 18 400 0 nil nil nil 128 1 3 49))
+      ((:char-spec japanese-jisx0208 :height any :weight bold)
+       (w32-logfont "ƒƒCƒŠƒI" 0 18 700 0 nil nil nil 128 1 3 49)
+       ((spacing . -1)))
+      ((:char-spec japanese-jisx0208 :height any :slant italic)
+       (w32-logfont "ƒƒCƒŠƒI" 0 18 400 0	t nil nil 128 1 3 49))
+      ((:char-spec japanese-jisx0208 :height any :weight bold :slant italic)
+       (w32-logfont "ƒƒCƒŠƒI" 0 18 700 0	t nil nil 128 1 3 49)
+       ((spacing . -1)))
+      ((:char-spec katakana-jisx0201 :height any)
+       (w32-logfont "ƒƒCƒŠƒI" 0 18 400 0 nil nil nil 128 1 3 49))
+      ((:char-spec katakana-jisx0201 :height any :weight bold)
+       (w32-logfont "ƒƒCƒŠƒI" 0 18 700 0 nil nil nil 128 1 3 49)
+       ((spacing . -1)))
+      ((:char-spec katakana-jisx0201 :height any :slant italic)
+       (w32-logfont "ƒƒCƒŠƒI" 0 18 400 0	t nil nil 128 1 3 49))
+      ((:char-spec katakana-jisx0201 :height any :weight bold :slant italic)
+       (w32-logfont "ƒƒCƒŠƒI" 0 18 700 0	t nil nil 128 1 3 49)
+       ((spacing . -1)))
+      )))
+  ))
+
+(defun create-private-fontsets ()
+  "Create private fontsets by ikuo"
+  (interactive)
+  (create-fontset-from-request "private-gothic-16x32"
+			       '((width . 16)
+				 (height . 32)
+				 (fixed . t)
+				 (italic . nil))
+			       '((family . "‚l‚r ƒSƒVƒbƒN")
+				 (family . "Courier New")))
+  (create-fontset-from-request "private-gothic-12x24"
+			       '((width . 12)
+				 (height . 24)
+				 (fixed . t)
+				 (italic . nil))
+			       '((family . "‚l‚r ƒSƒVƒbƒN")
+				 (family . "Courier New")))
+  (create-fontset-from-request "private-gothic-10x20"
+			       '((width . 10)
+				 (height . 20)
+				 (fixed . t)
+				 (italic . nil))
+			       '((family . "‚l‚r ƒSƒVƒbƒN")
+				 (family . "Courier New")))
+  (create-fontset-from-request "private-gothic-8x16"
+			       '((width . 8)
+				 (height . 16)
+				 (fixed . t)
+				 (italic . nil))
+			       '((family . "‚l‚r ƒSƒVƒbƒN")
+				 (family . "Courier New")))
+  (create-fontset-from-request "private-mincho-16x32"
+			       '((width . 16)
+				 (height . 32)
+				 (fixed . t)
+				 (italic . nil))
+			       '((family . "‚l‚r –¾’©")
+				 (family . "Courier New")))
+  (create-fontset-from-request "private-mincho-12x24"
+			       '((width . 12)
+				 (height . 24)
+				 (fixed . t)
+				 (italic . nil))
+			       '((family . "‚l‚r –¾’©")
+				 (family . "Courier New")))
+  (create-fontset-from-request "private-mincho-10x20"
+			       '((width . 10)
+				 (height . 20)
+				 (fixed . t)
+				 (italic . nil))
+			       '((family . "‚l‚r –¾’©")
+				 (family . "Courier New")))
+  (create-fontset-from-request "private-mincho-6x12"
+			       '((width . 6)
+				 (height . 12)
+				 (fixed . t)
+				 (italic . nil))
+			       '((family . "‚l‚r –¾’©")
+				 (family . "Courier New")))
+  )
+
+(setq scalable-fonts-allowed t)
+
+(setq default-frame-alist
+      (append (list
+; 	       '(foreground-color . "LemonChiffon")
+; 	       '(background-color . "black")
+; 	       '(border-color . "black")
+; 	       '(mouse-color . "white")
+; 	       '(cursor-color . "black")
+	       '(width . 80)
+; 	       '(height . 41) ;; osaka|“™•12‚Ìê‡
+; 	       '(font . "osaka|“™•12")
+	       '(height . 44) ;; osaka|“™•11‚Ìê‡
+	       (if (eq emacs-major-version 20)
+		   '(font . "Osaka-fontset")
+		 '(font . "osaka|“™•11")
+; 		 '(font . "fontset-meiryo")
+		 )
+; 	       '(font . "private-mincho-8x16")
+; 	       '(font . "private-osaka-8")
+; 	       '(fontset . "private-osaka-8")
+	       '(line-spacing . 0)
+	       '(tool-bar-lines . 0)	;; ƒ{ƒ^ƒ“‚ğ•\¦‚µ‚È‚¢B
+	       )
+	      default-frame-alist))
+(if (> emacs-major-version 20)
+    (setq default-frame-alist
+	  (append (list
+		   '(ime-font . (w32-logfont "Osaka|“™•" 0 0 400 0 nil nil nil 128 1 3 49))
+		   )
+		  default-frame-alist)))
+
+(defvar *private-font-created* nil)
+(defun my-mouse-set-font (&rest FONTS)
+  "create-private-fontsets and call mouse-set-font"
+ (interactive)
+ (unless *private-font-created*
+   (setq *private-font-created* t)
+   (create-private-fontsets))
+ (apply 'mouse-set-font FONTS))
+; (define-key global-map [S-down-mouse-1] 'my-mouse-set-font)
+
+(global-font-lock-mode)
+
+;; -------------------------------------------
+;; added at installation of Meadow 1.14: begin
+;;
+
+;;; ƒ}ƒEƒXƒJ[ƒ\ƒ‹‚ğÁ‚·İ’è
+(setq w32-hide-mouse-on-key t)
+(setq w32-hide-mouse-timeout 5000)
+
+;;; argument-editing ‚Ìİ’è
+(require 'mw32script)
+(mw32script-init)
+
+;;
+;; added at installation of Meadow 1.14: end
+;; -------------------------------------------
+
+
+;;; -------------------------------------------
+;;; Mew Easy Settings (generated automatically)
+;;
+
+(autoload 'mew "mew" nil t)
+; (autoload 'mew-send "mew" nil t)
+; (autoload 'mew-user-agent-compose "mew" nil t)
+
+;; Optional setup (Read Mail menu for Emacs 21):
+(if (boundp 'read-mail-command)
+    (setq read-mail-command 'mew))
+
+;; Optional setup (e.g. C-xm for sending a message):
+(if (boundp 'mail-user-agent)
+    (setq mail-user-agent 'mew-user-agent))
+(if (fboundp 'define-mail-user-agent)
+    (define-mail-user-agent
+      'mew-user-agent
+      'mew-user-agent-compose
+      'mew-draft-send-letter
+      'mew-draft-kill
+      'mew-send-hook))
+
+;; 
+;(setq mew-cc  nil)
+
+;; backup message
+;(setq mew-fcc "+backup")
+
+;; do not show demo
+;(setq mew-demo nil)
+
+;; modify Cc:
+;(setq mew-replyto-to-list '("Reply-To:"))
+;(setq mew-replyto-cc-list nil)
+
+;; do not get mail when startup (offline mode)
+;(setq mew-auto-get         nil)
+
+;; sample of guess
+;(setq mew-case-guess-alist
+;      '(("X-Mailer:"
+;        ("Outlook" . "microsoft"))
+;       ))
+;(setq mew-case-guess-when-prepared t)
+;(setq mew-case-guess-when-replied  t)
+;(setq mew-case-guess-when-composed t)
+;(setq mew-case-guess-addition      t)
+
+;; print message
+;(setq mew-w32-prog-print     "notepad.exe")
+;(setq mew-w32-prog-print-arg "/p")
+;(setq mew-w32-cs-print       'shift_jis-dos)
+;(define-process-argument-editing "/notepad\.exe$"
+;  (lambda (x)
+;    (general-process-argument-editing-function x nil t)))
+
+;; pick with japanese (Perl is required).
+;(setq mew-prog-grep "mg")
+;(setq mew-prog-grep-opts '("-j" "jis" "-l" "-e" "-x" "&mime"))
+
+;; mouse click and start web browser
+;(require 'mew-browse)
+;(define-key global-map [S-mouse-2] 'browse-url-at-mouse)
+
+;; enable password caching
+;(setq mew-use-cached-passwd t)
+
+;; fancy threading
+;(setq mew-use-fancy-thread t)
+;; show thread separator
+;(setq mew-use-thread-separator t)
+
+;; add review mark('*') automatically
+;(setq mew-scan-form-mark-review t)
+;; add delete mark('d') automatically
+;(setq mew-scan-form-mark-delete t)
+
+(define-key ctl-x-map "r" 'mew)
+(define-key ctl-x-map "m" 'mew-send)
+
+;;; Mew Easy Settings (generated automatically): end
+;;; -------------------------------------------
+
+
+;; html-helper-mode
+(autoload 'html-helper-mode "html-helper-mode" "Yay HTML" t)
+(setq html-helper-do-write-file-hooks t)
+(setq auto-mode-alist (cons '("\\.html$" . html-helper-mode) auto-mode-alist))
+(setq auto-mode-alist (cons '("\\.shtml$" . html-helper-mode) auto-mode-alist))
+
+
+; (load "~/.jde.el")
+
+;;;;;;;-----------------------------------------
+;;
+;; migemo (“ú–{ŒêƒCƒ“ƒNƒŠƒƒ“ƒ^ƒ‹ƒT[ƒ`)
+;;
+;; ;; (setq load-path (append load-path (list "/usr/local/share/migemo")))
+;; (setq migemo-directory "C:/cygwin/usr/local/share/migemo")
+;; (load "migemo")
+;; (setq migemo-use-frequent-pattern-alist t)
+;; (setq migemo-use-pattern-alist t)
+;; (migemo-init)
+;; ;(setq migemo-user-dictionary "c:/cygwin/home/ikuo/.migemo-user-dict")
+;;;;;;;-----------------------------------------
+
+;;;;;;;-----------------------------------------
+;;
+;; cmigemo
+;;
+;; Šî–{İ’è
+(setq migemo-command "cmigemo")
+(setq migemo-options '("-q" "--emacs"))
+;; migemo-dict ‚ÌƒpƒX‚ğw’è
+; (setq migemo-directory "C:/cygwin/usr/local/share/migemo")
+(setq migemo-dictionary "C:/cygwin/usr/local/share/cmigemo/migemo-dict")
+(setq migemo-user-dictionary nil)
+(setq migemo-regex-dictionary nil)
+
+;; ƒLƒƒƒbƒVƒ…‹@”\‚ğ—˜—p‚·‚é
+(setq migemo-use-pattern-alist t)
+(setq migemo-use-frequent-pattern-alist t)
+(setq migemo-pattern-alist-length 1024)
+;; «‘‚Ì•¶šƒR[ƒh‚ğw’èD
+;; ƒoƒCƒiƒŠ‚ğ—˜—p‚·‚é‚È‚çC‚±‚Ì‚Ü‚Ü‚Å\‚¢‚Ü‚¹‚ñ
+(setq migemo-coding-system 'euc-jp-unix)
+
+(load-library "migemo")
+;; ‹N“®‚É‰Šú‰»‚às‚¤
+(migemo-init)
+;;;;;;;-----------------------------------------
+
+(define-key global-map "\C-cm" 'migemo-toggle-isearch-enable)
+
+
+;;; browse-url ‚Ìİ’è
+(global-set-key [S-mouse-2] 'browse-url-at-mouse)
+
+;;---------------------------------------------------------
+;;w3m‚Ìİ’è
+;;---------------------------------------------------------
+(autoload 'w3m "w3m" "Interface for w3m on Emacs." t)
+(autoload 'w3m-find-file "w3m" "w3m interface function for local file." t)
+(autoload 'w3m-browse-url "w3m" "Ask a WWW browser to show a URL." t)
+(autoload 'w3m-search "w3m-search" "Search QUERY using SEARCH-ENGINE." t)
+(autoload 'w3m-weather "w3m-weather" "Display weather report." t)
+(autoload 'w3m-antenna "w3m-antenna" "Report chenge of WEB sites." t)
+
+;; Meadow‚Å‚àCygwin‚Ìmountİ’è‚³‚ê‚½ƒpƒX‚ğg‚¦‚é‚æ‚¤‚É‚µ‚½‚¢
+(if (<= emacs-major-version 20)
+    (require 'cygwin-mount)
+  (require 'cygwin-mount-mw32))
+(cygwin-mount-activate)
+
+;buffer ‚Ì‘I‘ğ‚ª i-search ‚Ì‚æ‚¤‚È“®ì‚É‚È‚è‚Ü‚·B
+(load "iswitchb")
+(iswitchb-default-keybindings)
+;“¯ˆê–¼‚Ì buffer ‚ª‚ ‚Á‚½‚Æ‚«A (ŠJ‚¢‚Ä‚¢‚éƒtƒ@ƒCƒ‹‚ÌƒpƒX‚Ìˆê•”‚ª•\¦‚³‚ê) 
+;‚¿‚å‚Á‚ÆŒ©ˆÕ‚­‚È‚è‚Ü‚·B :-)
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'post-forward-angle-brackets)
+
+(load-if-exists "~/.twitter.el")
+
+;;;
+;;; Lookup Setup Example
+;;;
+
+;; ƒI[ƒgƒ[ƒh‚Ìİ’è
+(autoload 'lookup "lookup" nil t)
+(autoload 'lookup-region "lookup" nil t)
+(autoload 'lookup-pattern "lookup" nil t)
+
+;; ƒL[ƒoƒCƒ“ƒh‚Ìİ’è
+(define-key ctl-x-map "l" 'lookup)	; C-x l - lookup
+(define-key ctl-x-map "y" 'lookup-region) ; C-x y - lookup-region
+(define-key ctl-x-map "\C-y" 'lookup-pattern) ; C-x C-y - lookup-pattern
+
+;; ŒŸõƒG[ƒWƒFƒ“ƒg‚Ìİ’è
+; (setq lookup-search-agents '((ndtp "nfs") (ndeb "/cdrom")))
+(setq lookup-search-agents '((ndtp "nfs")))
+
+;; ‚±‚Ìİ’è‚Å M-x print-buffer RET ‚È‚Ç‚Å‚Ìˆóü‚ª‚Å‚«‚é‚æ‚¤‚É‚È‚è‚Ü‚·
+ (define-process-argument-editing "notepad"
+   (lambda (x) (general-process-argument-editing-function x nil t)))
+ 
+ (defun w32-print-region (start end
+                                &optional lpr-prog delete-text buf display
+                                &rest rest)
+   (interactive)
+   (let ((tmpfile (expand-file-name (make-temp-name "w32-print-")
+                                    temporary-file-directory))
+         (coding-system-for-write w32-system-coding-system))
+     (write-region start end tmpfile nil 'nomsg)
+     (call-process "notepad" nil nil nil "/p" tmpfile)
+     (and (file-writable-p tmpfile) (delete-file tmpfile))))
+ (setq print-region-function 'w32-print-region)
+
+(add-hook 'write-file-hooks 'time-stamp)

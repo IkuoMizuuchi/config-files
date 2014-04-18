@@ -1,0 +1,157 @@
+#-*-Mode: shell-script;-*-
+# .my-settings
+# $Id: .my-settings 4192 2014-04-11 08:49:26Z satetsu $
+#
+
+###########################################################################
+# OS recognition
+
+export OS=`uname -s | cut -d_ -f1`
+export CPU=`uname -m`
+
+if [ "${OS}" == "CYGWIN" ]; then
+    if [ "${CPU}" == "x86_64" ]; then
+	export ARCHDIR=Cygwin64
+    else
+	export ARCHDIR=Cygwin
+    fi
+elif [ "${OS}" == "Linux" ]; then
+    if [ "${CPU}" == "x86_64" ]; then
+	export ARCHDIR=Linux64
+    else
+	export ARCHDIR=Linux
+    fi
+fi
+
+# OS recognition
+###########################################################################
+
+
+###########################################################################
+# EusLisp settings
+
+if [ "$EUSDIR" = "" ]; then
+#    export EUSDIR=/usr/local/eus/euslisp
+    export EUSDIR=${HOME}/prog/euslisp
+else
+    echo "remove ${PREVIOUSEUSPATH}/bin from PATH"
+    export PATH=`echo ${PATH} | sed -e s%:${PREVIOUSEUSPATH}/bin%%gi`
+    echo "remove ${PREVIOUSEUSPATH}/lib from LD_LIBRARY_PATH"
+    export LD_LIBRARY_PATH=`echo ${LD_LIBRARY_PATH} | sed -e s%:${PREVIOUSEUSPATH2}/lib%%gi`
+    echo \$EUSDIR is $EUSDIR
+fi
+
+export PREVIOUSEUSPATH="${EUSDIR}/${ARCHDIR}"
+
+export EUSRC="${HOME}/.eusrc.l"
+
+# export LIBGL_ALWAYS_INDIRECT=true
+
+# export KOTAROPATH=/usr/local/eus/kotaro
+export KOTAROPATH=${HOME}/prog/kotaro
+
+# EusLisp settings
+###########################################################################
+
+
+###########################################################################
+# setting PATH and LD_LIBRARY_PATH
+
+export PATH="/usr/local/bin:/usr/local/lib:/usr/bin:/bin"
+
+export PATH="${PATH}:${EUSDIR}/${ARCHDIR}/bin:${EUSDIR}/${ARCHDIR}/lib"
+
+if [ "${OS}" == "CYGWIN" ]; then
+export PATH="${PATH}:/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
+fi
+
+if [ "${LD_LIBRARY_PATH}" == "" ]; then
+export LD_LIBRARY_PATH=/usr/local/lib:${EUSDIR}/${ARCHDIR}/lib:${EUSDIR}/${ARCHDIR}/bin
+else
+export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/lib:${EUSDIR}/${ARCHDIR}/lib:${EUSDIR}/${ARCHDIR}/bin"
+fi
+
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib
+
+# setting PATH and LD_LIBRARY_PATH
+###########################################################################
+
+
+###########################################################################
+# common environmental variables used in Mizuuchi Lab.
+
+export RBRAPPDIR="${HOME}/prog/rbrapp"
+
+# if you want to modify default ROBOT of nervous, change the below line
+export ROBOT=yutoankle
+echo \$ROBOT is now $ROBOT
+
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${RBRAPPDIR}/bin/${ROBOT}/${ARCHDIR}
+
+# OpenCV
+# export PATH="${PATH}:/usr/local/OpenCV2.1/bin"
+export PATH="${PATH}:/usr/local/opencv/build/x86/vc11/bin"
+
+# Ghostscript 9.06
+export PATH="${PATH}:/usr/local/gs9.06/bin"
+
+# not common?
+export CVSROOT=mizuuchi.lab.tuat.ac.jp:/home/cvs
+export SVNROOT=mizuuchi.lab.tuat.ac.jp:/home/svn
+export CVSDIR=${HOME}/prog
+
+# common environmental variables used in Mizuuchi Lab.
+###########################################################################
+
+
+###########################################################################
+# Prompt
+
+#PS1='\h [\w] % '
+if [ "$TERM" = "emacs" -o "$EMACS" = t ]; then
+#export PS1='$USERNAME@\h<\w> '
+export PS1='\t \h<\W> '
+else
+if [ "${CPU}" == "x86_64" ]; then
+export PS1='\[\033]0;\w\007\033[32m\]\u@\h \[\033[33m\w\033[0m\] (64bit) $
+> '
+fi
+fi
+
+# Prompt
+###########################################################################
+
+
+###########################################################################
+# Terminal related
+
+if [ "$TERM" = "kterm" ]; then
+export TERM=vt100
+#  export LANG=ja_JP.EUC
+export LANG=japanese
+fi
+
+if [ "`which dircolors`" != "" ]; then
+# eval `dircolors -b /etc/DIR_COLORS`
+eval `dircolors`
+fi
+umask 0022
+if [ "$DISPLAY" = "" ]; then
+    export DISPLAY=localhost:0.0
+fi
+export MAKE_MODE=unix
+export CYGWINROOT="C:/cygwin"
+
+if [ "$LS_OPTIONS" = "" ]; then
+   export LS_OPTIONS='--color=auto'
+fi
+
+# Terminal related
+###########################################################################
+
+
+
+#### commit logs
+#
+# $Log$
+#
