@@ -5,8 +5,11 @@
 
 #各ファイルの説明
 ## .bashrc-extra
-~/.bashrc の末尾に追加する。
+**~/.bashrc の末尾に追加する。
  cat .bashrc-extra >> ~/.bashrc
+**内容：~/.bash_aliases があれば読み込む。~/.my-settings があれば読み込む。
+
+## .my-settings
 
 #おまけ(extra)
 以下、テスト領域。
