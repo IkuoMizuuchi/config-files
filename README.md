@@ -8,6 +8,8 @@
 ~/.bashrc の末尾に追加する。
  cat .bashrc-extra >> ~/.bashrc
 
+## .emacs
+
 #おまけ(extra)
 以下、テスト領域。
 ```c++
