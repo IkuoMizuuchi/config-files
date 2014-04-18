@@ -11,6 +11,8 @@
 
 ## .my-settings
 
+## .bash_aliases
+
 #おまけ(extra)
 以下、テスト領域。
 ```c++
