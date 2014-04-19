@@ -6,6 +6,7 @@
 #				     update : 	980112 I. Mizuuchi
 #				     update : 	090311 I. Mizuuchi
 #				     update : 	090610 I. Mizuuchi
+#				     update : 	140419 I. Mizuuchi
 
 
 if ($#argv != 0) then 
@@ -19,7 +20,7 @@ if ($#argv != 0) then
     mkdir -p "${dir}/bak"
     chmod go-rwx "${dir}/bak"
     if (-f "${dir}/bak/${base}-${d}.${ext}") then
-      echo -n "overwrite" bak/$file.$d "[y/n]? "
+      echo -n "overwrite" ${dir}/bak/${base}-${d}.${ext} "[y/n]? "
       set RESPONSE = $<
       if ("$RESPONSE" == "y" || "$RESPONSE" == "Y") then
 	cp -pf "$file" "${dir}/bak/${base}-${d}.${ext}"
