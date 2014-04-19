@@ -7,32 +7,32 @@
 ## 各ファイルの説明
 ### .bashrc-extra
 * インストール方法
-  - ~/.bashrc の末尾に追加する。
+    - ~/.bashrc の末尾に追加する。
 
 ```sh
   cat .bashrc-extra >> ~/.bashrc
 ```
 
 * 内容
-  - ~/.bash_aliases があれば読み込む。
-  - ~/.my-settings があれば読み込む。
+    - ~/.bash_aliases があれば読み込む。
+    - ~/.my-settings があれば読み込む。
 
 ### .my-settings
 * インストール方法
-  - ホームディレクトリにシンボリックリンクを張る
-  - 以下は`~/config-files/`に`clone`したときの例
+    - ホームディレクトリにシンボリックリンクを張る
+    - 以下は`~/config-files/`に`clone`したときの例
 
 ```sh
   ln -s ~/config-files/.my-settings ~
 ```
 
 * 内容
-  - OS に応じた環境変数の設定を行う。
+    - OS に応じた環境変数の設定を行う。
 
 ### .bash_aliases
 * インストール方法
-  - ホームディレクトリにシンボリックリンクを張る
-  - `ikuo_rm`, `ikuo_unrm`, `cp_date` のインストールが必要
+    - ホームディレクトリにシンボリックリンクを張る
+    - `ikuo_rm`, `ikuo_unrm`, `cp_date` のインストールが必要
 
 ```sh
   ln -s ~/config-files/.bash_aliases ~
@@ -41,18 +41,18 @@
 ```
 
 * 内容
-  - bash のエイリアス設定
+    - bash のエイリアス設定
 
 ### .emacs
 * インストール方法
-  - ホームディレクトリにシンボリックリンクを張る
+    - ホームディレクトリにシンボリックリンクを張る
 
 ```sh
   ln -s ~/config-files/.emacs ~
 ```
 
 * 内容
-  - Emacs の設定
+    - Emacs の設定
 
 ## おまけ(extra)
 以下、テスト領域。
