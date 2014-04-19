@@ -17,6 +17,7 @@
 
 #おまけ(extra)
 以下、テスト領域。
+
 ```c++
 float ave (int dat[], int num) {
       int sum=0, i;
