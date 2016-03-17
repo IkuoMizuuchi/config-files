@@ -38,6 +38,7 @@
   ln -s ~/config-files/.bash_aliases ~
   cp ikuo_rm ikuo_unrm cp_date /usr/local/bin/    ##アップデートに対応するためにシンボリックリンクでもOK
   mkdir ~/.trash
+  chmod go-rwx ~/.trash     ##ゴミ箱の中は他人には見えないようにする。  
 ```
 
 * 内容
