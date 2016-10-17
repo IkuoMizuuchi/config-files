@@ -21,6 +21,14 @@ elif [ "${OS}" == "Linux" ]; then
     else
 	export ARCHDIR=Linux
     fi
+    #for ubuntu
+    export UBUNTU_MAJOR_VERSION=`lsb_release -r | cut -f2 | cut -d. -f1`
+fi
+
+if [ "${CPU}" == "x86_64" ]; then
+    export ARCH=amd64
+else
+    export ARCH=i386
 fi
 
 # OS recognition
@@ -72,6 +80,7 @@ export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/lib:${EUSDIR}/${ARCHDIR}/l
 fi
 
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/boost_1_58_0/lib
 
 # setting PATH and LD_LIBRARY_PATH
 ###########################################################################
@@ -92,13 +101,25 @@ export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${RBRAPPDIR}/bin/${ROBOT}/${ARCHDIR}
 # export PATH="${PATH}:/usr/local/OpenCV2.1/bin"
 export PATH="${PATH}:/usr/local/opencv/build/x86/vc11/bin"
 
-# Ghostscript 9.06
-export PATH="${PATH}:/usr/local/gs9.06/bin"
+# Ghostscript 9.10
+export PATH="${PATH}:/usr/local/gs/gs9.10/bin"
 
 # not common?
 export CVSROOT=mizuuchi.lab.tuat.ac.jp:/home/cvs
 export SVNROOT=mizuuchi.lab.tuat.ac.jp:/home/svn
 export CVSDIR=${HOME}/prog
+
+# Hondo env
+export GPASROBOT=dummysmcs
+
+
+
+# Ichimura env
+export JAVA_HOE=/usr/lib/jvm/java-8-oracle
+export PATH=/usr/lib/jvm/jaba-8-oracle/bin:$PATH
+export CLASSPATH=.:/usr/lib/jvm/java-8-oracle/lib:/usr/local/jung
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/lib/jvm/java-8-oracle/lib/${ARCH}:/usr/lib/jvm/java-8-oracle/lib/${ARCH}/jli:/usr/lib/jvm/java-8-oracle/jre/lib/${ARCH}/server/
+
 
 # common environmental variables used in Mizuuchi Lab.
 ###########################################################################
@@ -149,6 +170,36 @@ fi
 # Terminal related
 ###########################################################################
 
+
+###########################################################################
+# ROS
+
+if [ "${UBUNTU_MAJOR_VERSION}" == "12" ]; then
+    echo "You cannot use ROS in this version"
+else
+    source /opt/ros/indigo/setup.bash
+    source ${HOME}/catkin_ws/devel/setup.bash
+fi
+
+# ROS
+###########################################################################
+
+
+###########################################################################
+# misc
+
+export GIT_SSL_NO_VERIFY=true
+
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:.
+
+export PYTHONSTARTUP=${HOME}/.pyrc
+
+export EDITOR='emacs -nw'
+
+export PYTHONPATH=${PYTHONPATH}:${HOME}/prog/caffe/python
+
+# misc
+###########################################################################
 
 
 #### commit logs
