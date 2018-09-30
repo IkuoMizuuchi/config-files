@@ -128,7 +128,10 @@ if [ "$TERM" = "emacs" -o "$EMACS" = t ]; then
 export PS1='\t \h<\W> '
 else
 if [ "${CPU}" == "x86_64" ]; then
-export PS1='\[\033]0;\w\007\033[32m\]\u@\h \[\033[33m\w\033[0m\] (64bit) $
+export PS1='\[\033]0;\w\007\033[32m\]\u@\h \[\033[33m\w\033[0m\] (${UBUNTU_MAJOR_VERSION}-64bit) $
+> '
+else
+export PS1='\[\033]0;\w\007\033[32m\]\u@\h \[\033[33m\w\033[0m\] (${UBUNTU_MAJOR_VERSION}-32bit) $
 > '
 fi
 fi
@@ -168,10 +171,16 @@ fi
 ###########################################################################
 # ROS
 
+if   [ "${UBUNTU_MAJOR_VERSION}" == "14" ]; then
+    export ROS_VERSION=indigo
+elif [ "${UBUNTU_MAJOR_VERSION}" == "16" ]; then
+    export ROS_VERSION=kinetic
+fi
+
 if [ "${UBUNTU_MAJOR_VERSION}" == "12" ]; then
     echo "You cannot use ROS in this version"
 else
-    source /opt/ros/indigo/setup.bash
+    source /opt/ros/${ROS_VERSION}/setup.bash
     source ${HOME}/catkin_ws/devel/setup.bash
 fi
 
@@ -191,6 +200,9 @@ export PYTHONSTARTUP=${HOME}/.pyrc
 export EDITOR='emacs -nw'
 
 export PYTHONPATH=${PYTHONPATH}:${HOME}/prog/caffe/python
+
+#TWELITE
+export PATH=${PATH}:${HOME}/prog/TWESDK/Tools/jenprog
 
 # misc
 ###########################################################################
