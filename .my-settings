@@ -172,16 +172,18 @@ fi
 # ROS
 
 if   [ "${UBUNTU_MAJOR_VERSION}" == "14" ]; then
-    export ROS_VERSION=indigo
+    export ROS_DISTRO=indigo
 elif [ "${UBUNTU_MAJOR_VERSION}" == "16" ]; then
-    export ROS_VERSION=kinetic
+    export ROS_DISTRO=kinetic
+elif [ "${UBUNTU_MAJOR_VERSION}" == "18" ]; then
+    export ROS_DISTRO=melodic
 fi
 
 if [ "${UBUNTU_MAJOR_VERSION}" == "12" ]; then
     echo "You cannot use ROS in this version"
 else
-    source /opt/ros/${ROS_VERSION}/setup.bash
-    source ${HOME}/catkin_ws/devel/setup.bash
+    source /opt/ros/${ROS_DISTRO}/setup.bash
+#    source ${HOME}/catkin_ws/devel/setup.bash -extend
 fi
 
 # ROS
