@@ -163,7 +163,8 @@ function where () {
     alias $1;
     which -a $1;
 }
-if [ "$WSL" == true ]; then
+
+if [ "$WSL_DISTRO_NAME" != "" ]; then
     alias	start='wslview'
 else
     alias	start='gnome-open'
