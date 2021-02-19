@@ -9,6 +9,12 @@
 export OS=`uname -s | cut -d_ -f1`
 export CPU=`uname -m`
 
+if [ `uname -v | cut -d- -f2 | cut -d' ' -f1` == Microsoft ]; then
+    export WSL=true
+else
+    export WSL=false
+fi
+
 if [ "${OS}" == "CYGWIN" ]; then
     if [ "${CPU}" == "x86_64" ]; then
 	export ARCHDIR=Cygwin64
@@ -220,6 +226,13 @@ eval "$(pyenv init -)"
 
 # satetsu
 ###########################################################################
+
+#for wls2
+if [ "$WSL2" == true ]; then
+    eval `ssh-agent`
+    ssh-add
+    alias exit='eval `ssh-agent -k`; \exit'
+fi
 
 #### commit logs
 #

@@ -163,6 +163,10 @@ function where () {
     alias $1;
     which -a $1;
 }
-alias	start='gnome-open'
+if [ "$WSL" == true ]; then
+    alias	start='wslview'
+else
+    alias	start='gnome-open'
+fi
 
 fi
