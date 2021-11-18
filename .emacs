@@ -182,6 +182,12 @@
 	     (setq indent-tabs-mode t);;using tab chars
 	     ))
 
+(add-hook 'python-mode-hook
+	  '(lambda ()
+	     (setq tab-width 4)
+	     (setq indent-tabs-mode t)
+	     ))
+
 ;; for changelog
 ;; http://www.namazu.org/~satoru/unimag/1/
 (setq user-full-name "Ikuo Mizuuchi")
@@ -220,3 +226,5 @@
 (add-hook 'html-helper-mode-hook
 	  '(lambda () (setq tab-width 2)))
 
+(menu-bar-mode 0)
+(tool-bar-mode 0)
