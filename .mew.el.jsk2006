@@ -1,0 +1,50 @@
+(setq mew-user "ikuo") ;; (user-login-name)
+(setq mew-mail-domain "jsk.t.u-tokyo.ac.jp")
+(setq mew-name "Ikuo Mizuuchi") ;; (user-full-name)
+(setq mew-pop-auth 'apop)
+(setq mew-pop-user "ikuo")  ;; (user-login-name)
+(setq mew-pop-server "monoceros2.jsk.t.u-tokyo.ac.jp")    ;; if not localhost
+(setq mew-smtp-server "monoceros2.jsk.t.u-tokyo.ac.jp")  ;; if not localhost
+(setq mew-icon-directory "/home/jsk/ikuo/lib/emacs/etc/Mew") ;; if using XEmacs
+
+(setq mew-pop-delete 21) ;;keep 21 days
+
+(setq mew-thread-indent-string " ")
+(setq mew-use-fancy-thread t)
+
+(setq mew-scan-form '(type (5 date) " " (12 from) "กร" t (50 subj)))
+
+(setq mew-use-cached-passwd t)
+
+(setq mew-passwd-lifetime 24)
+
+(setq mew-biff-interval 121)
+
+(setq mew-pop-size 0) ;; retrieve all messages even including long mails
+
+;; See also mew-config-alist for advanced use
+
+
+;; for X-Face
+(if (= 21 emacs-major-version)
+    (progn
+      (setq mew-use-highlight-x-face t)
+      (setq mew-use-highlight-x-face-function 'x-face-decode-message-header)))
+(define-key mew-summary-mode-map "\C-x4s" 'x-face-save)
+(define-key mew-draft-mode-map "\C-x4i" 'x-face-insert)
+(define-key mew-draft-header-map "\C-x4i" 'x-face-insert)
+(define-key mew-draft-mode-map "\M-t" 'x-face-show)
+(define-key mew-draft-header-map "\M-t" 'x-face-show)
+
+(setq x-face-default-xbm-file "~/.xfaces/ikuo48mod.xbm")
+(add-hook 'mew-draft-mode-hook 'x-face-insert)
+(add-hook 'mew-make-message-hook 'x-face-turn-off)
+
+
+(let ((new nil))
+  (dolist (entry mew-field-spec)
+    (if (string= (car entry) "^\\(X\\|Original\\)-")
+	(progn (push '("^X-Spam-Status:$" t) new)
+	       (push entry new))
+      (push entry new)))
+  (setq mew-field-spec (nreverse new)))

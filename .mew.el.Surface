@@ -1,0 +1,211 @@
+;; (if (fboundp 'setup-ucs) (setup-ucs))
+
+; (setq mew-user "ikuo") ;; (user-login-name)
+; (setq mew-mail-domain "jsk.t.u-tokyo.ac.jp")
+(setq mew-name "Ikuo Mizuuchi") ;; (user-full-name)
+; (setq mew-pop-auth 'pass)
+; (setq mew-pop-user "ikuo")  ;; (user-login-name)
+;(setq mew-pop-server "mail.jsk.t.u-tokyo.ac.jp")    ;; if not localhost
+; (setq mew-smtp-server "monoceros.jsk.t.u-tokyo.ac.jp")  ;; if not localhost
+;(setq mew-smtp-server "localhost")
+;; (setq mew-icon-directory "/usr/local/lib/emacs/etc/Mew") ;; if using XEmacs
+;(setq mew-smtp-port "submission") ;; default is "smtp"(25). submission(587) needs authentification
+
+; (setq mew-smtp-auth t)
+; (setq mew-smtp-auth-list '("CRAM-MD5" "LOGIN" "PLAIN"))
+; (setq mew-smtp-user "ikuo")
+
+; (setq mew-pop-delete 21) ;;keep 21 days
+
+(setq mew-thread-indent-string " ")
+; (setq mew-use-fancy-thread t)
+
+(setq mew-scan-form '(type (5 date) " " (12 from) "b" t (50 subj)))
+
+; (setq w32-pipe-read-delay 10)
+
+(setq mew-use-cached-passwd t)
+(setq mew-passwd-lifetime 24)
+
+;; (setq mew-pop-size 0) ;; retrieve all messages even including long mails
+
+; (setq mew-use-other-frame t)
+
+;; See also mew-config-alist for advanced use
+
+(setq mew-header-max-depth 1024)
+(setq mew-header-max-length 1024)
+(setq max-specpdl-size 2048)
+(setq mew-file-max-size (* 32 1000 1000)) ;32[MByte]
+(setq mew-cite-fields '("From:" "To:" "Cc:" "Date:" "Subject:"))
+(setq mew-cite-format "----- Original Message -----\nFrom: %s\nTo:%s\nCc:%s\nDate: %s\nSubject: %s\n\n")
+; (setq mew-cite-prefix-function 'mew-cite-prefix-username) ;ex. ikuo>
+; (setq mew-replyto-to-list '("Reply-To:"))
+;(setq mew-dcc "ikuo@jsk.t.u-tokyo.ac.jp")
+;(setq mew-from "Ikuo Mizuuchi <ikuo@jsk.t.u-tokyo.ac.jp>")
+
+;; biff
+(setq mew-use-biff nil)
+(setq mew-use-biff-bell t)
+(setq mew-biff-interval 15)
+
+;; suffix .mew
+(setq mew-use-suffix t)
+
+;;; X-FACE Configuration
+;; (load-library "uncompface")
+;; (load-library "x-face-e21")
+;; (setq mew-use-highlight-x-face t)
+(setq mew-use-highlight-x-face nil)
+(setq mew-use-highlight-x-face-function 'x-face-decode-message-header)
+(autoload 'x-face-decode-message-header "x-face-e21")
+(autoload 'x-face-insert "x-face-e21" nil t)
+(autoload 'x-face-save "x-face-e21" nil t)
+(autoload 'x-face-show "x-face-e21" nil t)
+(autoload 'x-face-turn-off "x-face-e21")
+(setq x-face-auto-image t)
+
+(define-key mew-summary-mode-map "\C-x4s" 'x-face-save)
+(define-key mew-draft-mode-map "\C-x4i" 'x-face-insert)
+(define-key mew-draft-header-map "\C-x4i" 'x-face-insert)
+(define-key mew-draft-mode-map "\M-t" 'x-face-show)
+(define-key mew-draft-header-map "\M-t" 'x-face-show)
+
+;; (setq x-face-default-xbm-file "~/.xfaces/ikuo48mod.xbm")
+(setq x-face-default-xbm-file "~/.xfaces/Kotaro_2.xbm")
+(add-hook 'mew-draft-mode-hook 'x-face-insert)
+(add-hook 'mew-make-message-hook 'x-face-turn-off)
+
+(defun backup-mew-uidl ()
+  (copy-file "~/Mail/.mew-uidl"
+	     (format-time-string "~/Mail/bak/mew-uidl-%Y%m%d-%H%M")))
+
+(add-hook 'mew-quit-hook 'backup-mew-uidl)
+(add-hook 'kill-emacs-hook 'backup-mew-uidl)
+
+(defun time-diff (time1 time2)
+  (+ (* (- (elt time1 0) (elt time2 0)) 65536)
+     (- (elt time1 1) (elt time2 1))))
+
+(defun file-last-modification-time-diff (file1 file2)
+  (time-diff
+   (elt (file-attributes file1) 5)
+   (elt (file-attributes file2) 5)))
+
+(defun backup-mew-uidl-less ()
+  (let* ((file (car (last (directory-files "~/Mail/bak"))))
+	 (mod-time (elt (file-attributes (concat "~/Mail/bak/" file)) 5)))
+    (if (< (* 24 60 60) (time-diff (current-time) mod-time))
+	(backup-mew-uidl))))
+
+(add-hook 'mew-pop-sentinel-non-biff-hook 'backup-mew-uidl-less)
+
+(let ((new nil))
+  (dolist (entry mew-field-spec)
+    (if (string= (car entry) "^\\(X\\|Original\\)-")
+	(progn (push '("^X-Spam-Status:$" t) new) ;;•\Ž¦‚µ‚Ä—~‚µ‚¢ƒwƒbƒ_‚ð‚±‚±‚É’Ç‰Á‚·‚éB
+	       (push entry new))
+      (push entry new)))
+  (setq mew-field-spec (nreverse new)))
+
+
+(setq mew-config-alist
+      '(
+	;;
+	(default
+	 (name		"Ikuo Mizuuchi")
+	 (user		"mizuuchi")
+	 (mail-domain	"cc.tuat.ac.jp")
+	 (smtp-server	"outlook-apacnorth.office365.com")
+	 (smtp-ssl	t)
+	 (smtp-ssl-port	587)
+	 (smtp-port	587)
+	 (smtp-user	"mizuuchi@cc.tuat.ac.jp")
+	 (pop-server	"outlook.office365.com")
+	 (pop-ssl	t)
+	 (pop-ssl-port	995)
+;; 	 (pop-port	995)
+	 (pop-auth	t)
+	 (pop-delete	365)
+	 (pop-user	"mizuuchi@cc.tuat.ac.jp")
+	 (dcc		"mizuuchi@cc.tuat.ac.jp")
+	 )
+	;;
+	(ikuo@mizuuchi.lab
+	 (name		"Ikuo Mizuuchi")
+	 (user		"ikuo")
+	 (mail-domain	"mizuuchi.lab.tuat.ac.jp")
+	 (smtp-ssl	t)
+	 (smtp-port	587)
+	 (smtp-ssl-port	587)
+	 (smtp-server	"mizuuchi.lab.tuat.ac.jp")
+	 (smtp-user	"ikuo")
+;; 	 (pop-server	"mizuuchi.lab.tuat.ac.jp")
+;; 	 (pop-auth	apop)
+	 (pop-server	"gateway")
+	 (pop-auth	pop)
+	 (pop-user	"ikuo")
+	 (pop-delete 365)
+	 (dcc		"ikuo@mizuuchi.lab.tuat.ac.jp")
+	 )
+	;;
+	("ikuo@jsk"
+	 ("name"        "Ikuo Mizuuchi")
+	 ("user"        "ikuo")
+	 ("mail-domain" "jsk.t.u-tokyo.ac.jp")
+	 ("smtp-server" "mail.jsk.t.u-tokyo.ac.jp")
+	 ("pop-server"  "mail.jsk.t.u-tokyo.ac.jp")
+	 ("pop-auth"    apop)
+	 ("pop-user"    "ikuo")
+	 ("dcc"         "ikuo@jsk.t.u-tokyo.ac.jp, mizuuchi@cc.tuat.ac.jp")
+	 ("pop-delete" "365")
+	 ("smtp-port"   "submission")
+	 )
+	;;
+	("mizuuchi@cc"
+	 (name        "Ikuo Mizuuchi")
+	 (user        "mizuuchi")
+	 (mail-domain "cc.tuat.ac.jp")
+	 (smtp-server "ac-1.tuat.ac.jp")
+	 (smtp-ssl    t)
+;; 	 (smtp-port   "smtp")
+	 (pop-server  "ac-1.tuat.ac.jp")
+	 (pop-ssl     t)
+	 (pop-ssl-port 995)
+;; 	 (pop-port    995)
+;; 	 (pop-auth    pop)
+	 (pop-delete  100)
+	 (pop-user    "mizuuchi@cc.tuat.ac.jp")
+	 (dcc         "mizuuchi@cc.tuat.ac.jp")
+	 )
+	;;
+	("mizuuchi@cc-old"
+	 ("name"        "Ikuo Mizuuchi")
+	 ("user"        "mizuuchi")
+	 ("mail-domain" "cc.tuat.ac.jp")
+	 ("smtp-server" "wm01.tuat.ac.jp")
+	 ("pop-server"  "wm01.tuat.ac.jp")
+	 ("pop-auth"    apop)
+	 ("pop-delete"  21)
+	 ("pop-user"    "mizuuchi@cc.tuat.ac.jp")
+	 ("dcc"         "mizuuchi@cc.tuat.ac.jp")
+	 ("smtp-port"   "smtp")
+	 )
+	;;
+	("microsoft"
+	 ("content-type"      "Application/Octet-Stream")
+	 )
+	;;
+	))
+
+;; attach Japanese-name files by OutlookExpress manner
+(eval-after-load "mew" '(load "mew-fake-cdp-sending" t))
+
+;; in order to use stunnel for pop-ssl
+;; default mew-ssl-cert-directory=="~/.certs" cannot be understood by Meadow
+;; (setq mew-ssl-cert-directory "C:\\Users\\ikuo\\Documents\\.certs")
+;; (setq mew-ssl-cert-directory "/home/ikuo/.certs")
+(setq mew-ssl-cert-directory "/etc/ssl/certs")
+(setq mew-ssl-verify-level 0)
+
+;; (setq mew-debug t)
