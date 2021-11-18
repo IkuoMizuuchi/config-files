@@ -1,0 +1,608 @@
+;; -*- Mode: Emacs-Lisp -*-
+
+;; (set-language-environment "Japanese")
+;; (set-terminal-coding-system 'iso-2022-jp)
+;; (add-hook 'shell-mode-hook
+;; 	  '(lambda () (set-buffer-process-coding-system 'junet 'junet)))
+
+;; (setq default-input-method "japanese-egg-wnn")
+;; (setq wnn-jserver (list "darling" "monoceros" "localhost"))
+;; (setq wnn-server-type 'jserver)
+;; (setq wnn-wnn6-server t)
+;; (setq comment-use-syntax nil)
+
+(defun add-path-if-not-included (path)
+  (if (not (member path load-path))
+      (push path load-path)))
+
+(add-path-if-not-included
+ (expand-file-name (format "~/local/share/emacs/%d.%d/lisp"
+			   emacs-major-version emacs-minor-version)))
+(add-path-if-not-included
+ (expand-file-name (format "~/local/share/emacs/%d.%d/site-lisp"
+			   emacs-major-version emacs-minor-version)))
+(add-path-if-not-included
+ (expand-file-name (format "~/local/share/emacs/site-lisp")))
+
+(add-path-if-not-included
+ (expand-file-name (format "~/share/emacs/%d.%d/lisp"
+			   emacs-major-version emacs-minor-version)))
+
+(add-path-if-not-included
+ (expand-file-name (format "~/share/emacs/21.1/lisp")))
+
+(add-path-if-not-included
+ (expand-file-name (format "/usr/local/share/emacs/site-lisp/mew")))
+
+
+(setq load-path
+      (append load-path
+	      (list
+;; 	       (expand-file-name
+;; 		(format "~/share/emacs/%d.%d/site-lisp/Mule-UCS"
+;; 			emacs-major-version emacs-minor-version))
+	       (expand-file-name "~/tool/elisp")
+;; 	       (expand-file-name "~/tool/elisp/x-face")
+	       (expand-file-name "~/tool/elisp/tm/tm")
+	       )))
+
+;;; Font Lock mode(minor mode)
+; (cond (window-system
+       (global-font-lock-mode t)
+;        ))
+(font-lock-add-keywords 'lisp-mode '("setq"))
+
+;(if (eq window-system 'x)
+;    (setq visible-bell t))		; Use visual bell.
+
+;;; Just like they say: Run rmail on C-x r.  Run an inferior shell on C-x !.
+(define-key ctl-x-map "r" 'mew)
+(define-key ctl-x-map "m" 'mew-send)
+(define-key ctl-x-map "!" 'shell-command)
+
+;;; When in Text mode, want to be in Auto-Fill mode.
+;;;
+(defun my-auto-fill-mode nil (auto-fill-mode 1))
+(setq text-mode-hook 'my-auto-fill-mode)
+(setq mail-mode-hook 'my-auto-fill-mode)
+
+;;; My personal definitions
+;;;
+(define-key esc-map "g" 'goto-line)
+
+(setq ikuo nil)
+
+;(load "boiled-egg")
+;;; Egg configuration
+(setq its:*defrule-verbose* nil)
+(when ikuo
+  (its-defrule "(" "(" nil nil "roma-kana")
+  (its-defrule ")" ")" nil nil "roma-kana")
+  (its-defrule "{" "{" nil nil "roma-kana")
+  (its-defrule "}" "}" nil nil "roma-kana")
+;   (its-defrule "," ", " nil nil "roma-kana")
+;   (its-defrule "." ". " nil nil "roma-kana")
+  (its-defrule "1" "1" nil nil "roma-kana")
+  (its-defrule "2" "2" nil nil "roma-kana")
+  (its-defrule "3" "3" nil nil "roma-kana")
+  (its-defrule "4" "4" nil nil "roma-kana")
+  (its-defrule "5" "5" nil nil "roma-kana")
+  (its-defrule "6" "6" nil nil "roma-kana")
+  (its-defrule "7" "7" nil nil "roma-kana")
+  (its-defrule "8" "8" nil nil "roma-kana")
+  (its-defrule "9" "9" nil nil "roma-kana")
+  (its-defrule "0" "0" nil nil "roma-kana")
+  (its-defrule "\"" "\"" nil nil "roma-kana")
+  (its-defrule "<" "<" nil nil "roma-kana")
+  (its-defrule ">" ">" nil nil "roma-kana")
+  )
+(global-set-key "\C-h" 'backward-delete-char)
+;(if (equal (getenv "OS") "SunOS") (load "egg"))
+;(load "egg-roma-kana-dump")
+;(load "egg-sun-keymap")
+(if (equal (getenv "OS") "SunOS")
+    (setq jserver-host-name "cepheus")
+  (setq jserver-host-name "localhost"))
+(when ikuo
+  (define-key fence-mode-map "\C-h" 'fence-backward-delete-char)
+  )
+;;;; "nn" to "ÇÒ"
+(if (featurep 'mule)
+    (setq enable-double-n-syntax t))
+
+(global-set-key "\er" 'replace-string)
+(global-set-key "\e?" 'help-command)
+(global-set-key "\C-h" 'delete-backward-char)
+(global-set-key "\C-x\C-d" 'kill-line)
+(global-set-key "\C-x!" 'shell)
+(global-set-key "\e\C-l" 'run-rvisionview)
+(global-set-key "\C-cc" 'compile)
+
+;;;; for mew
+(autoload 'mew "mew" nil t)
+(autoload 'mew-send "mew" nil t)
+
+;; for mew (old)
+(setq mew-header-max-depth 1024)
+(setq mew-header-max-length 1024)
+(setq max-specpdl-size 2048)
+(setq mew-file-max-size (* 10 1000 1000)) ;10[MByte]
+(setq mew-mail-domain-list '("jsk.t.u-tokyo.ac.jp"))
+(setq mew-cite-fields '("From:" "To:" "Cc:" "Date:" "Subject:"))
+(setq mew-cite-format "----- Original Message -----\nFrom: %s\nTo:%s\nCc:%s\nDate: %s\nSubject: %s\n\n")
+;(setq mew-cite-prefix-function 'mew-cite-prefix-username)
+(setq mew-replyto-to-list '("Reply-To:"))
+(setq mew-dcc "ikuo@jsk.t.u-tokyo.ac.jp")
+(setq mew-from "Ikuo Mizuuchi <ikuo@jsk.t.u-tokyo.ac.jp>")
+;(setq mew-use-folders-file-p t)
+;(load "my-mew")
+(setq mew-header-max-length 200)
+; mew color setting
+(setq mew-highlight-header-color-subject   "moccasin")
+(setq mew-highlight-header-color-from      "Plum1")
+(setq mew-highlight-header-color-to        "Goldenrod")
+(setq mew-highlight-header-color-key       "green")
+(setq mew-highlight-header-color-private   (face-foreground 'default))
+(setq mew-highlight-header-color-important "cyan")
+(setq mew-highlight-header-color-marginal  "orange")
+(setq mew-highlight-header-color-xmew      "yellow")
+(setq mew-prog-imls-arg-list '("--thread=yes" "--indent=1"))
+(setq mew-prog-imput-arg-list '("--receipt=on"))
+(add-hook 'mew-send-hook
+	  '(lambda () (defun mew-draft-real-send-letter (&optional preserve)
+			(my-mew-draft-real-send-letter preserve))))
+(defun my-mew-draft-real-send-letter (&optional preserve)
+  (let ((attachdir (mew-attachdir))
+	(msg (file-name-nondirectory (buffer-file-name)))
+	(process-connection-type mew-connection-type1)
+	keep config unknown)
+    (run-hooks 'mew-real-send-hook)
+    (set-buffer-modified-p t) ;; ensure to save
+    (mew-frwlet
+     mew-cs-dummy mew-cs-mime-trans
+     (save-buffer))
+    (setq config (mew-header-get-value mew-config:))
+    (and config (setq config (mew-split config ?,)))
+    (while config
+      (if (not (member (car config) mew-config-list))
+	  (if unknown
+	      (setq unknown (concat unknown "," (car config)))
+	    (setq unknown (car config))))
+      (setq config (cdr config)))
+    (if (and unknown
+	     (not (y-or-n-p (format "Unknown Config: selector '%s'. Send this message anyway? " unknown))))
+	(message
+	 (substitute-command-keys
+	  "To send this message, edit Config: then type '\\<mew-draft-mode-map>\\[mew-draft-send-letter]'"))
+      ;; learning short names
+      (if (and mew-use-auto-alias mew-addrbook-append-domain-p)
+	  ;; If mew-addrbook-append-domain-p is nil, automatic
+	  ;; short names would be conflicted to local users.
+	  (mapcar (function mew-addrbook-alias-add)
+		  (mew-header-parse-address-list (list mew-to: mew-cc:))))
+      ;; Fcc: vs folders
+      (let ((folders (mew-header-get-value mew-fcc:)) folder)
+	(if (null folders)
+	    ()
+	  (setq folders (mew-addrstr-parse-value-list2 folders))
+	  (while folders
+	    (setq folder (car folders))
+	    (if (or (mew-folder-mailp folder)
+		    (mew-folder-local-newsp folder)
+		    (mew-folder-imapp folder)
+		    (file-name-absolute-p folder))
+		()
+	      (setq folder (concat "+" folder)))
+	    (mew-folder-check folder 'force-to-create)
+	    (setq folders (cdr folders)))))
+      ;;
+      (if preserve
+	  ;; leave the draft
+	  (setq keep "--preserve=on")
+	(setq keep "--preserve=off")
+	(mew-overlay-delete-buffer)
+	(kill-buffer (current-buffer))
+	;;
+	(if (mew-current-get 'window)
+	    (progn
+	      (set-window-configuration (mew-current-get 'window))
+	      (mew-current-set 'window nil))))
+      (set-buffer (generate-new-buffer mew-buffer-watch))
+      ;; watch buffer
+      (setq mew-watch-buffer-process
+	    (apply (function mew-im-start-process) mew-prog-imput
+		   "Send"
+		   "-draftfolder" mew-draft-folder
+		   "-draftmessage" msg
+		   keep
+		   "-watch" "-verbose"
+		   mew-prog-imput-arg-list))
+      (mew-set-process-cs mew-watch-buffer-process
+			  mew-cs-autoconv mew-cs-mime-trans)
+      (set-process-sentinel mew-watch-buffer-process 'mew-watch-sentinel)
+      (message "Sending a message in background by ikuo's routine.")
+      ;; keep +draft/mime/X alive if "C-uC-cC-c".
+      (or preserve (mew-delete-directory-recursively attachdir)))))
+
+;; Browse URL ------------------------------------------
+(defvar mew-highlight-url-face	'bold nil)
+(setq mew-bold-url-size nil)
+(add-hook 'mew-init-hook
+	  '(lambda ()
+	     (and window-system
+		  (define-key mew-message-mode-map [mouse-2] 
+		    'browse-url-at-mouse))
+	     (define-key mew-message-mode-map "\C-c\C-b" 
+	       'browse-url-at-point)
+; 	     (add-hook 'kill-emacs-hook (function mew-mark-clean-up))
+;; 	     (define-key mew-summary-mode-map "A"
+;; 	       '(lambda () (interactive)
+;; 		  (mew-summary-reply)
+;; 		  (xcite-yank-cur-msg)))
+	     (if (boundp 'mew-rfc822-fields)
+		 (setq mew-rfc822-fields
+		       (append '(("X-Mailer:" . mew-header-decode-text)
+				 ("X-Spam-Status:" . mew-header-decode-text))
+			       mew-rfc822-fields)))
+	     ))
+(add-hook 'mew-message-hook 'mew-message-highlight-url)
+(defun mew-message-highlight-url ()
+  (let ((url-regex
+	 "\\b\\(s?https?\\|ftp\\|file\\|gopher\\|news\\|telnet\\|wais\\|mailto\\):\\(//[-a-zA-Z0-9_.]+:[0-9]*\\)?[-a-zA-Z0-9_=?#$@~`%&*+|\\/.,]*[-a-zA-Z0-9_=#$@~`%&*+|\\/]")
+        overlay)
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward url-regex nil t)
+        (setq overlay (make-overlay (match-beginning 0) (match-end 0)))
+        (overlay-put overlay 'face mew-highlight-url-face)
+        (overlay-put overlay 'mouse-face 'highlight)
+	))))
+
+;;;; for use of webster
+(autoload 'webster "webster" "look up a word in Webster's 7th edition" t)
+
+;(setq tab-width 4)
+
+;;;; for DSERVER
+;(cond ((featurep 'mule)
+;       (setq dserver-server-list '("ara"))
+;       (setq od-dictfile-list '("od-eiwa"))
+;       (autoload 'online-dictionary "diclookup-mule" "Online dictionary." 
+;	 t nil)
+;       (autoload 'diclookup "diclookup-mule" "Online dictionary.
+;       Display diclookup buffer in the current frame." t nil)
+;       (autoload 'diclookup-other-frame "diclookup-mule" "Like `diclookup'
+;       command, but display diclookup buffer in another frame." t nil)
+;       (define-key-after menu-bar-file-menu [dictionary]
+;	 '("Online Dictionary" . online-dictionary) 'calendar)
+;       ))
+
+(setq dserver-server-list '("nfs")); "phoenics"))
+(autoload 'online-dictionary "diclookup-mule" "Online dictionary." t nil)
+(autoload 'diclookup "diclookup-mule" "Online dictionary.
+       Display diclookup buffer in the current frame." t nil)
+(autoload 'diclookup-other-frame "diclookup-mule" "Like `diclookup'
+       command, but display diclookup buffer in another frame." t nil)
+(define-key-after menu-bar-file-menu [dictionary]
+  '("Online Dictionary" . online-dictionary) 'calendar)
+
+(define-key global-map "\C-co" 'lookup-pattern)
+(define-key global-map "\C-cr" 'lookup-region)
+
+(autoload 'lookup "lookup" nil t)
+(autoload 'lookup-region "lookup" nil t)
+(autoload 'lookup-pattern "lookup" nil t)
+
+(setq lookup-search-agents '((ndtp "nfs") (ndspell)))
+
+
+(global-set-key "\C-h" 'backward-delete-char)
+(global-set-key "\M-?" 'help-for-help)
+
+
+;;; loading trr
+(autoload 'trr "/usr/share/lib/nemacs/lisp/trr" nil t)
+
+;;for perl mode
+(setq auto-mode-alist (cons '("\\.pl$" . perl-mode) auto-mode-alist))
+(if (featurep 'mule)
+    (setq interpreter-mode-alist
+	  (cons '("perl5" . perl-mode) interpreter-mode-alist)))
+
+(setq line-number-mode 1)
+
+;;; Xcite configuration 
+;; (autoload 'xcite "xcite" "Exciting cite" t)
+;; (autoload 'xcite-yank-cur-msg "xcite" "Exciting cite" t)
+;; (global-set-key "\C-c\C-x" 'xcite)
+;; (global-set-key "\C-c\C-y" 'xcite-yank-cur-msg)
+;; (add-hook 'mew-draft-mode-hook	; mew$BCa(J§$B"PCa(Jæ$B"nCa(Jπ$B"i(J
+;; 	  '(lambda ()
+;; 	     (define-key mew-draft-mode-map "\C-c\C-y"
+;; 	       'xcite-yank-cur-msg)))
+;; (add-hook 'message-mode-hook		; GNUS5$BCa(J§$B"PCa(Jæ$B"nCa(Jπ$B"i(J
+;; 	  '(lambda ()
+;; 	     (define-key message-mode-map "\C-c\C-y"
+;; 	       'xcite-yank-cur-msg)
+;; 	     (make-variable-buffer-local 'xcite:pre-cite-hook)
+;; 	     (setq xcite:pre-cite-hook
+;; 		   '(lambda ()
+;; 		      (if (get-buffer "*Article*")
+;; 			  (let ((curw (selected-window)))
+;; 			    (switch-to-buffer-other-window
+;; 			     "*Article*")
+;; 			    (mark-whole-buffer)
+;; 			    (select-window curw)))))))
+;;; End of Xcite configuration
+
+;;; Emacs-w3 configuration options
+(autoload 'w3 "w3/w3" "WWW Browser" t)
+;;; End of Emacs-w3 configuration options
+
+;(load-library "genjis")
+(setq auto-mode-alist 
+      (cons '("[Mm]akefile.*" . makefile-mode) auto-mode-alist))
+
+;(load-library "tex-jp")
+
+;(setq youbin-default-server "jsk")
+;(autoload 'mew-header-decode-address "mew-bq" nil t)
+;(autoload 'mew-header-decode-text "mew-bq" nil t)
+;(require 'youbin)
+;(youbin)
+
+;;; X-FACE Configuration
+(autoload 'x-face-decode-message-header "x-face-e21")
+(autoload 'x-face-insert "x-face-e21" nil t)
+(autoload 'x-face-save "x-face-e21" nil t)
+(autoload 'x-face-show "x-face-e21" nil t)
+(autoload 'x-face-turn-off "x-face-e21")
+(setq x-face-auto-image t)
+
+;; (cond ((boundp 'mew-header-alist)
+;;        (if (null (assoc "X-URL:" mew-header-alist))
+;; 	   (setq mew-header-alist
+;; 		 (cons '("X-URL:" . x-url) mew-header-alist))
+;; 	 (rplacd (assoc "X-URL:" mew-header-alist) x-url))
+;;        (if (null (assoc "X-Face:" mew-header-alist))
+;; 	   (setq mew-header-alist
+;; 		 (cons '("X-Face:" . x-face) mew-header-alist))
+;; 	 (rplacd (assoc "X-Face:" mew-header-alist) x-face))
+;; ;;        (if (null (assoc "Return-Receipt-To:" mew-header-alist))
+;; ;; 	   (setq mew-header-alist
+;; ;; 		 (cons '("Return-Receipt-To:" . "ikuo@jsk.t.u-tokyo.ac.jp")
+;; ;; 		       mew-header-alist))
+;; ;; 	 (rplacd (assoc "Return-Receipt-To:" mew-header-alist)
+;; ;; 		 "ikuo@jsk.t.u-tokyo.ac.jp"))
+;;        )
+;;       (t
+;;        (setq mew-header-alist
+;; 	     (list (cons "X-URL:" x-url)
+;; 		   (cons "X-Face:" x-face)
+;; ;		   (cons "Return-Receipt-To:" "ikuo@jsk.t.u-tokyo.ac.jp")
+;; 		   ))
+;;        ))
+
+; (if (not (functionp 'wnn-server-isconnect))
+;     (defun wnn-server-isconnect () nil))
+
+
+(setq default-major-mode 'text-mode)
+
+;;; When in C-mode, want all bells and whistles...
+(setq c-auto-newline nil)
+(setq c-tab-always-indent nil)
+(setq c-indent-level 2)
+(setq c-continued-statement-offset 2)
+(setq c-brace-offset 0)
+(setq c-brace-imaginary-offset 0)
+(setq c-argdecl-indent 0)
+(setq c-label-offset -2)
+
+;;; Want all mail to Bcc to yourself.  The second line says don't Cc to 
+;;; yourself (since you are already Bcc'ing yourself).
+;(setq mail-self-blind t)
+;;;(setq rmail-dont-reply-to-names (getenv "USER"))
+
+;;; Display time and load averages on the mode line.  (Used with the setting
+;;; of the mode line above.)
+(load "time" t t)
+(display-time)
+
+
+;;; My personal definitions
+;;;
+(defun change-maru-piri ()
+  (interactive)
+  (ten-comma)
+  (maru-piri))
+(defun change-piri-maru ()
+  (interactive)
+  (comma-ten)
+  (piri-maru))
+(defun maru-piri ()
+  (interactive)
+  (let ((pos (point)))
+    (goto-line 1)
+    (replace-string "ÅB" "ÅD" nil)
+    (goto-char pos)))
+(defun ten-comma ()
+  (interactive)
+  (let ((pos (point)))
+    (goto-line 1)
+    (replace-string "ÅA" "ÅC" nil)
+    (goto-char pos)))
+(defun piri-maru ()
+  (interactive)
+  (let ((pos (point)))
+    (goto-line 1)
+    (replace-string "ÅD" "ÅB" nil)
+    (goto-char pos)))
+(defun comma-ten ()
+  (interactive)
+  (let ((pos (point)))
+    (goto-line 1)
+    (replace-string "ÅC" "ÅA" nil)
+    (goto-char pos)))
+
+;(load-file "/home/jsk/ikuo/tool/elisp/gtags.el")
+;; (load "gtags")
+
+(define-key global-map "\C-m" 'newline-and-indent)
+(define-key esc-map "g" 'goto-line)
+(define-key esc-map "m" 'set-mark-command)
+(define-key esc-map "o" 'change-maru-piri)
+(define-key esc-map "p" 'fill-paragraph)
+(define-key esc-map "." 'gtags-find-tag)
+
+(global-set-key "\er" 'replace-string)
+(global-set-key "\e?" 'help-command)
+(global-set-key "\C-h" 'delete-backward-char)
+(global-set-key "\C-x!" 'shell)
+
+(define-key global-map "\C-\]" 'undo)
+(define-key esc-map "t" 'toroku-region)
+(define-key esc-map "i" 'indent-region)
+
+(define-key lisp-mode-map "\C-m" 'reindent-then-newline-and-indent)
+
+;;; Lisp indent style
+(put 'dolist 'lisp-indent-hook 1)
+(put 'when 'lisp-indent-hook 1)
+(put 'eval-when 'lisp-indent-hook 1)
+(put 'cond 'lisp-indent-hook 1)
+(put 'dotimes 'lisp-indent-hook 1)
+(put 'with-open-file 'lisp-indent-hook 1)
+(put 'with-open-file-with-lock 'lisp-indent-hook 1)
+
+(require 'shell)
+
+
+(setq ispell-library-path "/opt/JSK/pkgs/GKispell/lib")
+(autoload 'ispell-word "ispell"
+  "Check the spelling of word in buffer." t)
+(global-set-key "\e$" 'ispell-word)
+(autoload 'ispell-region "ispell"
+  "Check the spelling of region." t)
+(autoload 'ispell-buffer "ispell"
+  "Check the spelling of buffer." t)
+(autoload 'ispell-complete-word "ispell"
+  "Look up current word in dictionary and try to complete it." t)
+(autoload 'ispell-change-dictionary "ispell"
+  "Change ispell dictionary." t)
+(autoload 'ispell-message "ispell"
+  "Check spelling of mail message or news post.")
+
+(setq asm-mode-hook
+      (function
+       (lambda ()
+	 (define-key asm-mode-map              "\C-c\C-c" 'comment-region)
+	 )))
+(setq c-mode-hook 
+      (function
+       (lambda () 
+	 (define-key c-mode-map "\C-c\C-c" 'comment-region)
+	 (define-key c-mode-map "\C-m" 'reindent-then-newline-and-indent)
+	 )))
+(define-key emacs-lisp-mode-map       "\C-c\C-c" 'comment-region)
+(define-key lisp-interaction-mode-map "\C-c\C-c" 'comment-region)
+(define-key lisp-mode-map             "\C-c\C-c" 'comment-region)
+(setq perl-mode-hook
+      (function
+       (lambda ()
+	 (define-key perl-mode-map             "\C-c\C-c" 'comment-region)
+	 )))
+(setq shell-script-mode-hook
+      (function
+       (lambda ()
+	 (define-key sh-mode-map               "\C-c\C-c" 'comment-region)
+	 )))
+(setq tex-mode-hook
+      (function
+       (lambda ()
+	 (define-key tex-mode-map              "\C-c\C-c" 'comment-region)
+	 (define-key text-mode-map             "\C-c\C-c" 'comment-region)
+	 )))
+(setq html-helper-mode-hook
+      (function
+       (lambda ()
+	 (define-key html-helper-mode-map "\C-c\C-c" 'comment-region)
+	 )))
+(setq fortran-mode-hook
+      (function
+       (lambda ()
+	 (define-key fortran-mode-map "\C-c\C-c" 'fortran-comment-region)
+	 )))
+
+;; html-helper-mode
+(autoload 'html-helper-mode "html-helper-mode" "Yay HTML" t)
+(setq html-helper-do-write-file-hooks t)
+(setq auto-mode-alist (cons '("\\.html$" . html-helper-mode) auto-mode-alist))
+(setq auto-mode-alist (cons '("\\.shtml$" . html-helper-mode) auto-mode-alist))
+
+(setq make-mode-hook
+      (function
+       (lambda ()
+	 (define-key makefile-mode-map  "\C-c\C-c" 'comment-region)
+	 ))
+      )
+(setq makefile-mode-hook
+      (function
+       (lambda ()
+	 (define-key makefile-mode-map  "\C-c\C-c" 'comment-region)
+	 ))
+      )
+
+; global variables
+;(setq debug-on-error t)
+(setq mew-window-use-full nil)
+(setq require-final-newline 'non-nil)	; t:é©ìÆïtâ¡ nil:ïtâ¡ÇπÇ∏ else:êuÇ≠
+
+(setq auto-save-list-file-prefix "~/.saves/")
+
+(setq mew-use-overlay-keymap nil)
+
+;; (autoload 'x-face-encode "x-face"
+;;   "Generate X-Face string(s) from xbm file." t)
+;; (autoload 'x-face-insert "x-face"
+;;   "Insert X-Face fields." t)
+;; (autoload 'x-face-save "x-face"
+;;   "Save X-Face fields to files." t)
+;; (autoload 'x-face-view "x-face"
+;;   "View X-Face fields." t)
+;; (autoload 'x-face-ascii-view "x-face"
+;;   "View X-Face fields as ascii pictures." t)
+
+(defmacro dolist (vars &rest forms)
+  `(let ((,(car vars) nil) (hoge ,(cadr vars)))
+     (while hoge
+       (setq ,(car vars) (pop hoge))
+       ,@forms)
+     ,(cadr (cdr vars))))
+
+(setq mew-use-biff t)
+(setq mew-use-biff-bell t)
+
+;;Mule-UCS
+(defun setup-ucs ()
+  (interactive)
+  (require 'un-define)
+  (coding-system-put 'utf-8 'category 'utf-8)
+  ;; (set-coding-category-system 'utf-8 'utf-8)
+  (set-language-info
+   "Japanese" 
+   'coding-priority (cons 'utf-8
+			  (get-language-info "Japanese" 'coding-priority)))
+  (set-language-environment "Japanese")
+  )
+
+;; ;;
+;; ;; migemo (Japanese incremental search)
+;; ;;
+;; (setq load-path (append load-path
+;; 			(list "/usr/share/emacs/site-lisp/migemo"
+;; 			      "/opt/JSK/share/migemo")))
+;; ; (setq migemo-directory "C:/cygwin/usr/local/share/migemo")
+;; (load-library "migemo")
+;; (define-key global-map "\C-cm" 'migemo-toggle-isearch-enable)
+
