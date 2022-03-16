@@ -33,10 +33,15 @@
 * インストール方法
     - ホームディレクトリにシンボリックリンクを張る
     - `ikuo_rm`, `ikuo_unrm`, `cp_date` のインストールが必要
+    - `cp_date`を使うには、tcshが必要。（sudo apt install tcsh とか apt-cyg install tcsh とか setup-x86_64.exe を実行してtcshを入れるとか）
 
 ```sh
   ln -s ~/config-files/.bash_aliases ~
   cp ikuo_rm ikuo_unrm cp_date /usr/local/bin/    ##アップデートに対応するためにシンボリックリンクでもOK
+  # シンボリックリンクの場合は、ファイルファイル１つずつ下記のようにする。
+  # sudo ln -s ~/config-files/ikuo_rm /usr/local/bin/
+  # sudo ln -s ~/config-files/ikuo_unrm /usr/local/bin/
+  # sudo ln -s ~/config-files/cp_date /usr/local/bin/
   mkdir ~/.trash
   chmod go-rwx ~/.trash     ##ゴミ箱の中は他人には見えないようにする。  
 ```
