@@ -172,7 +172,9 @@ fi
 ###########################################################################
 # ROS
 
-if   [ "${UBUNTU_MAJOR_VERSION}" == "14" ]; then
+if   [ "${UBUNTU_MAJOR_VERSION}" == "12" ]; then
+    echo "You cannot use ROS in this version"
+elif [ "${UBUNTU_MAJOR_VERSION}" == "14" ]; then
     export ROS_DISTRO=indigo
 elif [ "${UBUNTU_MAJOR_VERSION}" == "16" ]; then
     export ROS_DISTRO=kinetic
@@ -182,9 +184,7 @@ elif [ "${UBUNTU_MAJOR_VERSION}" == "20" ]; then
     export ROS_DISTRO=noetic
 fi
 
-if [ "${UBUNTU_MAJOR_VERSION}" == "12" ]; then
-    echo "You cannot use ROS in this version"
-else
+if [ "${ROS_DISTRO}" != "" ]; then
     source /opt/ros/${ROS_DISTRO}/setup.bash
 #    source ${HOME}/catkin_ws/devel/setup.bash -extend
 fi
@@ -215,9 +215,12 @@ export PATH=${PATH}:${HOME}/prog/TWESDK/Tools/jenprog
 ###########################################################################
 # pyenv
 
-export USE_PYENV="true"
+if command -v pyenv 2>&1 > /dev/null ; then
+    export USE_PYENV="true"
+fi
 
-if [ "${USE_PYENV}" != "true" ]; then
+if [ "${USE_PYENV}" == "true" ]; then
+    echo "# setting up pyenv"
     #pyenv http://qiita.com/Kodaira_/items/feadfef9add468e3a85b
     export PYENV_ROOT=${HOME}/.pyenv
     export PATH=${PYENV_ROOT}/bin:${PATH}
