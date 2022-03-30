@@ -116,6 +116,13 @@ export CLASSPATH=.:/usr/lib/jvm/java-8-oracle/lib:/usr/local/jung
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/lib/jvm/java-8-oracle/lib/${ARCH}:/usr/lib/jvm/java-8-oracle/lib/${ARCH}/jli:/usr/lib/jvm/java-8-oracle/jre/lib/${ARCH}/server/
 
 
+# Mujoco
+export MUJOCO_PY_MJKEY_PATH=${HOME}/.mujoco/mjkey.txt
+export MUJOCO_PY_MJPRO_PATH=${HOME}/.mujoco/mujoco-2.1.1
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${HOME}/.mujoco/mujoco-2.1.1/bin
+export MUJOCO_PY_MJPRO_PATH=${HOME}/.mujoco/mujoco210
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${HOME}/.mujoco/mujoco210/bin
+
 # common environmental variables used in Mizuuchi Lab.
 ###########################################################################
 
