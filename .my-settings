@@ -213,9 +213,11 @@ export PATH=${PATH}:${HOME}/prog/TWESDK/Tools/jenprog
 ###########################################################################
 
 ###########################################################################
-# satetsu
+# pyenv
 
-if [ "${SATETSU}" != "" ]; then
+export USE_PYENV="true"
+
+if [ "${USE_PYENV}" != "true" ]; then
     #pyenv http://qiita.com/Kodaira_/items/feadfef9add468e3a85b
     export PYENV_ROOT=${HOME}/.pyenv
     export PATH=${PYENV_ROOT}/bin:${PATH}
@@ -223,7 +225,7 @@ if [ "${SATETSU}" != "" ]; then
     eval "$(pyenv init -)"
 fi
 
-# satetsu
+# pyenv
 ###########################################################################
 
 #for wls2
