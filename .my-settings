@@ -238,8 +238,8 @@ fi
 # pyenv
 ###########################################################################
 
-#for wls2
-if [ "$WSL_DISTRO_NAME" != "" ]; then
+#for wsl2
+if [ "$WSL_DISTRO_NAME" != "" ] && [ "$SSH_AGENT_PID" == "" ]; then
     eval `ssh-agent`
     ssh-add
     alias exit='eval `ssh-agent -k`; \exit'
