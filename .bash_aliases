@@ -34,7 +34,7 @@ alias po=popd
 alias	s='source ~/.bashrc'
 alias	aliases='source ~/.bash_aliases'
 
-alias cldir="find . \( -name '*~' -o -name '#*#' -o -name '*.aux' -o -name '*.blg' -o -name core -o -iname 'Thumbs.db*' -o -iname 'THUMB*.DBE' -o -iname '*.bb' -o -iname '*.stackdump' \) -ls -exec rm -f {} \;"
+alias cldir="find . \( -name '*~' -o -name '#*#' -o -name '*.aux' -o -name '*.blg' -o -name core -o -iname 'Thumbs.db*' -o -iname 'THUMB*.DBE' -o -iname '*.bb' -o -iname '*.stackdump' -o -iname '*:Zone.Identifier' \) -ls -exec rm -f {} \;"
 alias cldir-msword="find . \( -name '\~\$*' -o -name '~*.tmp' \) -print -exec rm {} \;"
 alias cldir-pptview="find . \( -iname gdiplus.dll -o -iname intldate.dll -o -iname ppvwintl.dll -o -iname saext.dll -o -iname unicows.dll -o -iname AUTORUN.INF -o -iname playlist.txt -o -iname play.bat -o -iname pptview.exe -o -iname pvreadme.htm \) -print -exec rm {} \;"
 
