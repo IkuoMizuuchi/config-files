@@ -15,6 +15,7 @@ if [ "${OS}" == "CYGWIN" ]; then
     else
 	export ARCHDIR=Cygwin
     fi
+    export MAJOR_VERSION=Cygwin
 elif [ "${OS}" == "Linux" ]; then
     if [ "${CPU}" == "x86_64" ]; then
 	export ARCHDIR=Linux64
@@ -23,6 +24,7 @@ elif [ "${OS}" == "Linux" ]; then
     fi
     #for ubuntu
     export UBUNTU_MAJOR_VERSION=`lsb_release -r | cut -f2 | cut -d. -f1`
+    export MAJOR_VERSION=${UBUNTU_MAJOR_VERSION}
 fi
 
 if [ "${CPU}" == "x86_64" ]; then
@@ -136,10 +138,10 @@ if [ "$TERM" = "emacs" -o "$EMACS" = t ]; then
 export PS1='\t \h<\W> '
 else
 if [ "${CPU}" == "x86_64" ]; then
-export PS1='\[\033]0;\w\007\033[32m\]\u@\h \[\033[33m\w\033[0m\] (${UBUNTU_MAJOR_VERSION}-64bit) $
+export PS1='\[\033]0;\w\007\033[32m\]\u@\h \[\033[33m\w\033[0m\] (${MAJOR_VERSION}-64bit) $
 > '
 else
-export PS1='\[\033]0;\w\007\033[32m\]\u@\h \[\033[33m\w\033[0m\] (${UBUNTU_MAJOR_VERSION}-32bit) $
+export PS1='\[\033]0;\w\007\033[32m\]\u@\h \[\033[33m\w\033[0m\] (${MAJOR_VERSION}-32bit) $
 > '
 fi
 fi
