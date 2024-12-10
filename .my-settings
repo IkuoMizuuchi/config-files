@@ -191,6 +191,10 @@ elif [ "${UBUNTU_MAJOR_VERSION}" == "18" ]; then
     export ROS_DISTRO=melodic
 elif [ "${UBUNTU_MAJOR_VERSION}" == "20" ]; then
     export ROS_DISTRO=noetic
+elif [ "${UBUNTU_MAJOR_VERSION}" == "22" ]; then
+    export ROS_DISTRO=humble
+elif [ "${UBUNTU_MAJOR_VERSION}" == "24" ]; then
+    export ROS_DISTRO=jazzy
 fi
 
 if [ "${ROS_DISTRO}" != "" ]; then
