@@ -1,6 +1,7 @@
 #-*-Mode: shell-script;-*-
 # .aliases
-# $Id: .bash_aliases 4144 2014-03-09 13:59:48Z ikuo $
+# ~/.bash_aliases is for being loaded from ~/.bashrc at start-up of bash
+# This file contains various convenient aliases (for ikuo as well :-).
 #
 
 function setenv () {
